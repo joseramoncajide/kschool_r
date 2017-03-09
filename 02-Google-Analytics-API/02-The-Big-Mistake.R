@@ -29,8 +29,8 @@ dataset_a <- as_data_frame(google_analytics(id = "46728973",
 
 dataset_a
 
-#' ## Agrupación manual de datos por campaña
-#' En el siguiente dataset he agrupado los datos por campaña y he sumado todoas las métricas para tener el número total de usuarios,   nuevos usuarios y rebotes para todo el periodo
+#' ### Agrupación manual de datos por campaña
+#' En el  dataset A he agrupado los datos por campaña y he sumado todoas las métricas para tener el número total de usuarios,   nuevos usuarios y rebotes para todo el periodo
 #' 
 
 dataset_a <- dataset_a %>% 
@@ -38,9 +38,13 @@ dataset_a <- dataset_a %>%
   group_by(campaign) %>% 
   summarise_all(funs(dataset_a = sum))
 
+#' **Así queda el primer data set**
+
 dataset_a
 
-#' ## Agrupación automática de datos por campaña
+#' ## Dataset B
+#' 
+#' ### Agrupación automática de datos por campaña
 #' Solicito los datos agrupados a la api. Para ello pido que no dimensione por fecha
 #' 
 
@@ -54,8 +58,15 @@ dataset_b <- as_data_frame(google_analytics(id = "46728973",
 
 names(dataset_b)[2:4] <- c("users_dataset_b", "newUsers_dataset_b", "bounces_dataset_b")
 
+#' **Y así queda el segundo data set**
 
+dataset_b
 
+#' ## Dataset A+B
+#' Para facilitar la comparación, he fusinado ambos en un único y he puesto las métricas de dos en dos:
+#'  
 
 dataset_a_b <- full_join(dataset_a, dataset_b) %>% 
   dplyr::select(campaign, starts_with('users_'), starts_with('newUsers_'), starts_with('bounces_')) 
+
+dataset_a_b

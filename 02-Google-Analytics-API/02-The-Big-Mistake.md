@@ -1,7 +1,7 @@
 02-The-Big-Mistake.R
 ================
 The Big Mistake
-Fri Mar 10 00:11:16 2017
+Fri Mar 10 00:17:19 2017
 
 **¿Por qué no coinciden las métricas de ambos datasets?**
 
@@ -92,17 +92,20 @@ dataset_a
     ## 10 2016-09-01 MAD - CURSO - SOLUCIONES NEGOCIO     2        2       2
     ## # ... with 2,536 more rows
 
-Agrupación manual de datos por campaña
---------------------------------------
+### Agrupación manual de datos por campaña
 
-En el siguiente dataset he agrupado los datos por campaña y he sumado todoas las métricas para tener el número total de usuarios, nuevos usuarios y rebotes para todo el periodo
+En el dataset A he agrupado los datos por campaña y he sumado todoas las métricas para tener el número total de usuarios, nuevos usuarios y rebotes para todo el periodo
 
 ``` r
 dataset_a <- dataset_a %>% 
   dplyr::select(-date) %>% 
   group_by(campaign) %>% 
   summarise_all(funs(dataset_a = sum))
+```
 
+**Así queda el primer data set**
+
+``` r
 dataset_a
 ```
 
@@ -121,8 +124,10 @@ dataset_a
     ## 10 BCN - MASTER - MARKETING ONLINE             100                 91
     ## # ... with 28 more rows, and 1 more variables: bounces_dataset_a <dbl>
 
-Agrupación automática de datos por campaña
-------------------------------------------
+Dataset B
+---------
+
+### Agrupación automática de datos por campaña
 
 Solicito los datos agrupados a la api. Para ello pido que no dimensione por fecha
 
@@ -146,12 +151,58 @@ dataset_b <- as_data_frame(google_analytics(id = "46728973",
 
 ``` r
 names(dataset_b)[2:4] <- c("users_dataset_b", "newUsers_dataset_b", "bounces_dataset_b")
+```
 
+**Y así queda el segundo data set**
 
+``` r
+dataset_b
+```
 
+    ## # A tibble: 38 × 4
+    ##                           campaign users_dataset_b newUsers_dataset_b
+    ##                              <chr>           <dbl>              <dbl>
+    ## 1                        (not set)              11                  8
+    ## 2                        0 - MARCA            2479               1836
+    ## 3                    0 - MARCA BCN             418                323
+    ## 4  ALI - MASTER - MARKETING ONLINE              30                 29
+    ## 5     AND - MASTER - ANALITICA WEB               2                  1
+    ## 6  AND - MASTER - MARKETING ONLINE               2                  2
+    ## 7         AND - MASTER - SEO y SEM              41                 34
+    ## 8     BCN - CURSO INT - CRO IGNITE              14                 11
+    ## 9     BCN - MASTER - ANALITICA WEB              91                 72
+    ## 10 BCN - MASTER - MARKETING ONLINE              94                 91
+    ## # ... with 28 more rows, and 1 more variables: bounces_dataset_b <dbl>
 
+Dataset A+B
+-----------
+
+Para facilitar la comparación, he fusinado ambos en un único y he puesto las métricas de dos en dos:
+
+``` r
 dataset_a_b <- full_join(dataset_a, dataset_b) %>% 
   dplyr::select(campaign, starts_with('users_'), starts_with('newUsers_'), starts_with('bounces_')) 
 ```
 
     ## Joining, by = "campaign"
+
+``` r
+dataset_a_b
+```
+
+    ## # A tibble: 38 × 7
+    ##                           campaign users_dataset_a users_dataset_b
+    ##                              <chr>           <dbl>           <dbl>
+    ## 1                        (not set)              11              11
+    ## 2                        0 - MARCA            3534            2479
+    ## 3                    0 - MARCA BCN             558             418
+    ## 4  ALI - MASTER - MARKETING ONLINE              30              30
+    ## 5     AND - MASTER - ANALITICA WEB               2               2
+    ## 6  AND - MASTER - MARKETING ONLINE               2               2
+    ## 7         AND - MASTER - SEO y SEM              47              41
+    ## 8     BCN - CURSO INT - CRO IGNITE              25              14
+    ## 9     BCN - MASTER - ANALITICA WEB             101              91
+    ## 10 BCN - MASTER - MARKETING ONLINE             100              94
+    ## # ... with 28 more rows, and 4 more variables: newUsers_dataset_a <dbl>,
+    ## #   newUsers_dataset_b <dbl>, bounces_dataset_a <dbl>,
+    ## #   bounces_dataset_b <dbl>
