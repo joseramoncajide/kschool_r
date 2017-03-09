@@ -63,10 +63,10 @@ names(dataset_b)[2:4] <- c("users_dataset_b", "newUsers_dataset_b", "bounces_dat
 dataset_b
 
 #' ## Dataset A+B
-#' Para facilitar la comparación, he fusinado ambos en un único y he puesto las métricas de dos en dos:
+#' Para facilitar la comparación, he fusionado ambos en un único y he puesto las métricas de dos en dos:
 #'  
 
 dataset_a_b <- full_join(dataset_a, dataset_b) %>% 
   dplyr::select(campaign, starts_with('users_'), starts_with('newUsers_'), starts_with('bounces_')) 
 
-dataset_a_b
+knitr::kable(dataset_a_b)
