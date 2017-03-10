@@ -11,7 +11,7 @@ suppressMessages(library(dplyr))
 library(ggplot2)
 
 # Cargamos el fichero de datos
-flights <- read_csv("data/669307277_T_ONTIME.csv")
+flights <- read_csv("05-Data-Wrangling/data/669307277_T_ONTIME.csv.zip")
 
 print(object.size(get('flights')), units='auto')
 
