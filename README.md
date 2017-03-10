@@ -20,3 +20,12 @@
 
 1. [Google Search Console](06-Google-Search-Console-API)
 
+
+## Descarga del código desde R Studio
+
+![](figures/git1.png)
+
+![](figures/git2.png)
+
+![](figures/git3.png)
+
