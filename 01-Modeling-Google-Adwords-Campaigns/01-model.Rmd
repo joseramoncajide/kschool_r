@@ -49,7 +49,6 @@ list.of.packages <- c("tidyverse", "tsoutliers", "lubridate", "hrbrthemes", "Cau
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 lapply(list.of.packages, require, character.only = TRUE)
-rm(list = ls())
 ```
 
 
@@ -693,6 +692,216 @@ usuarios_desde_google_adwords %>%
 
 ```{r}
 t.test(usuarios_desde_google_adwords$newUsers, usuarios_desde_google_adwords$returningUsers)
+```
+
+TODO: conclusión
+http://stats.stackexchange.com/questions/210217/how-do-i-interpret-these-results-from-a-paired-t-test
+
+# Series temporales
+
+- Una serie temporal es una secuencia de datos, observaciones o valores, medidos en determinados momentos y ordenados cronológicamente.
+
+- En el análisis de las series temporales se usan métodos que ayudan a interpretarlas así como a predecir su evolución
+
+## Convertir un vector a una serie temporal
+
+Lo hacemos con la función `ts()` aunque hay más.
+
+```{r, echo=TRUE}
+new_users.ts <- ts(usuarios_desde_google_adwords$newUsers, 
+                   frequency = 365, 
+                   start = decimal_date( ymd( min( usuarios_desde_google_adwords$date ) ) ) )
+```
+
+```{r}
+new_users.ts
+```
+
+## Visualización de un serie
+
+```{r, fig.height=8, fig.width=12, message=FALSE, warning=FALSE}
+plot(new_users.ts, main="Nuevos usuarios")
+```
+
+## Detección de puntos de interés
+
+```{r, echo=TRUE}
+new_users.ts.fit <- tsoutliers::tso(new_users.ts, 
+                                    types = c("AO","LS","TC","IO"),
+                                    maxit.iloop=20, 
+                                    tsmethod = "auto.arima")
+new_users.ts.fit
+```
+
+##
+```{r, echo=TRUE, fig.height=8, fig.width=12, message=FALSE, warning=FALSE}
+plot(new_users.ts.fit)
+```
+
+##
+
+```{r, fig.height=8, fig.width=12, message=FALSE, warning=FALSE}
+new_users_outliers <- as_data_frame(new_users.ts.fit$outliers)
+new_users_outliers$date <- as.Date(new_users_outliers$time,format='%Y:%j')
+
+new_users_outliers <- left_join(usuarios_desde_google_adwords,
+                                new_users_outliers)
+
+outliers.sub <- subset(new_users_outliers, type != "")
+outliers.sub2 <- subset(outliers.sub, type != "AO")
+new_users_outliers %>% ggplot(aes( x= date, y= newUsers)) + geom_xspline(color="#cccccc", spline_shape=-0.4, size=0.5) +
+  geom_point(data=subset(new_users_outliers, type != ""), aes(x=date ,y= newUsers, color = factor(type)),size=3,alpha=0.95) +
+  geom_label_repel(data=outliers.sub,  aes(x=date, y=newUsers, label = factor(type)), box.padding = unit(1.55, "lines"),point.padding = unit(0.5, "lines"), segment.color = '#666666') +
+  geom_encircle(data=outliers.sub2, colour="#d62d20", expand=0.1) +
+  # scale_color_discrete(name = 'type') +
+  scale_colour_manual(name = "",   values = c('IO'="#ffa700", 'LS'="#008744", 'AO'="#d62d20"), labels = c("IO: Punto precursor del cambio", "AO: Extremo", "LS: Cambio de nivel")) +
+  # scale_colour_manual(name = "Detected changes:",   values = c('IO'="#ffa700", 'LS'="#008744", 'AO'="#d62d20"), labels = c("IO: Innovational", "LS: Shift", "AO: Additive")) +
+  scale_x_date(labels = scales::date_format("%m/%Y"), breaks = scales::date_breaks("month"), date_minor_breaks = "1 week") +
+  xlab("") +
+  ylim(0,150) +
+  ylab("# Nuevos usuarios") + 
+  labs(title="Evolución de la adquisición de nuevos usuarios", subtitle= "Puntos de interés", caption = "Fuente: Google Analytics") +
+  theme_ipsum_rc(grid='x', axis=F, ticks = F, grid_col = "#eeeeee") +theme( legend.position = "bottom")
+```
+
+## Causal Impact
+
+- El 2017-01-24 se cambian las creatividades de todas las campañas 
+- La invesión y las palabras claves se mantienen inalterables 
+- Todas las campañas mantienen su etiquetado original
+
+**¿Ha supuesto este cambio algún impacto en nuestra captación de nuevos usuarios?**
+
+```{r, echo=TRUE, cache=T}
+pre.period <- as.Date(c("2016-09-01", "2017-01-23"))
+post.period <- as.Date(c("2017-01-24", "2017-03-05"))
+
+impact <- CausalImpact(usuarios_desde_google_adwords %>% dplyr::select(date, newUsers), 
+                       pre.period, 
+                       post.period)
+```
+
+## Causal Impact
+
+```{r, fig.height=8, fig.width=12, message=FALSE, warning=FALSE}
+plot(impact)
+```
+
+## Causal Impact
+
+**¿Podemos cuantificarlo?**
+
+```{r}
+summary(impact, "report")
+```
+
+# Análisis de campañas
+
+- Vamos a analizar en detalle el rendimiento de las campañas de Google Adwords
+- Seguimos teniendo como variable objetivo los **nuevos usuarios**
+- Realizaremos un análisis descriptico para tratar de explicar que cursos funcionan mejor que otros.
+
+## Obtención de nuevos datos
+
+- Extrar de Google Analytics las métricas `ga:users`, `ga:newUsers` y `ga:bounces` dimensionadas por fecha y campaña
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE, cache=T}
+ga_auth()
+google_adwords_metricas <- google_analytics(id = "46728973",
+                            start="2016-09-01", end="2017-03-05",
+                            metrics = c("ga:users", "ga:newUsers", "ga:bounces"),
+                            dimensions = c("ga:date, ga:campaign"),
+                            segment = c("sessions::condition::ga:sourceMedium=@google;ga:medium=@cpc"),
+                            sort = c("ga:date"),
+                            max=99999999, 
+                            samplingLevel="HIGHER_PRECISION"
+)
+
+knitr::kable(head(google_adwords_metricas))
+```
+
+##TODO hacer primero limpieza y separación de campañas
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE, cache=T}
+costes_por_campana <- google_analytics(id = "46728973",
+                          start="2016-09-01", end="2017-03-05",
+                          metrics = c("ga:impressions,ga:adClicks,ga:adCost,ga:cpc"),
+                          dimensions = c("ga:date","ga:campaign"),
+                          segment = NULL,
+                          sort = c("ga:date"),
+                          max=99999999, 
+                          samplingLevel="HIGHER_PRECISION")
+
+costes_por_campana <- read_csv('data/costes_por_campana.csv')
+
+knitr::kable(head(costes_por_campana))
+```
+
+## Primera inspección a los datos
+
+¿Hay datos llamativos?
+
+```{r, echo=TRUE}
+summary(google_adwords_metricas)
+```
+
+```{r, echo=TRUE}
+summary(costes_por_campana)
+```
+
+## Uníon de ambos conjuntos de datos
+
+```{r, echo=TRUE}
+campanas <- left_join(google_adwords_metricas, costes_por_campana, by = c("date", "campaign"))
+```
+
+Descubrimos ya la presencia de errores de medición:
+
+```{r}
+knitr::kable(head(campanas))
+```
+
+
+## Tratamiento de datos
+
+- Nos han pedido que centremos el análisis en campañas sobre cursos y masters por lo que descartamos las demás
+- Además, nos intersea tener una variable para la ciudad, el tipo de programa y el nombre del curso o máster
+
+```{r, echo=TRUE}
+campanas <- campanas %>%  
+  filter(!grepl("MARCA|Competencia|(not set)", campaign)) %>% 
+  separate(campaign, c("ciudad", "programa", "nombre"), " - ")
+```
+
+
+
+```{r}
+knitr::kable(head(campanas))
+```
+
+## Tratamiento de datos
+
+Comprobamos la existencia de valores nulos
+
+```{r}
+summary(campanas)
+```
+
+Son NA generados por la ausencia de datos en el dataset `costes_por_campana`. Podemo omitirlos:
+
+```{r, echo=TRUE}
+campanas <- campanas %>% na.omit
+```
+
+## Análisis exploratorio: CPC
+
+
+```{r, fig.height=8, fig.width=12, message=FALSE, warning=FALSE}
+campanas %>% ggplot(aes(x=nombre, y=cpc, color=programa)) + geom_boxplot() + facet_wrap(~ciudad) + coord_flip() +
+  xlab("") +
+  ylab("# usuarios") + 
+  labs(title="Inversión en Adwords", subtitle= "Distribución del CPC por curso", caption = "Fuente: Google Analytics") +
+  theme_ipsum_rc(grid='Y', axis=F, ticks = F, grid_col = "#eeeeee") +theme( legend.position = "bottom")
 ```
 
 
