@@ -45,7 +45,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ## Cargamos las librerías necesarias
 
 ```{r}
-list.of.packages <- c("tidyverse", "tsoutliers", "lubridate", "hrbrthemes", "CausalImpact", "googleAnalyticsR", "ggrepel", "ggalt", "gridExtra", "broom", "knitr")
+list.of.packages <- c("tidyverse", "tsoutliers", "lubridate", "hrbrthemes", "CausalImpact", "googleAnalyticsR", "ggrepel", "ggalt", "gridExtra", "broom", "knitr", "gplots")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 lapply(list.of.packages, require, character.only = TRUE)
@@ -870,7 +870,8 @@ knitr::kable(head(campanas))
 ```{r, echo=TRUE}
 campanas <- campanas %>%  
   filter(!grepl("MARCA|Competencia|(not set)", campaign)) %>% 
-  separate(campaign, c("ciudad", "programa", "nombre"), " - ")
+  separate(campaign, c("ciudad", "programa", "nombre"), " - ") %>% 
+  mutate(ctr = round(adClicks / impressions,2)) 
 ```
 
 
@@ -902,6 +903,57 @@ campanas %>% ggplot(aes(x=nombre, y=cpc, color=programa)) + geom_boxplot() + fac
   ylab("# usuarios") + 
   labs(title="Inversión en Adwords", subtitle= "Distribución del CPC por curso", caption = "Fuente: Google Analytics") +
   theme_ipsum_rc(grid='Y', axis=F, ticks = F, grid_col = "#eeeeee") +theme( legend.position = "bottom")
+```
+
+## Análisis exploratorio: Abandonos
+
+```{r, fig.height=8, fig.width=12, message=FALSE, warning=FALSE}
+campanas %>%  mutate(returningUsers = users - newUsers) %>% group_by(programa, nombre) %>% 
+  summarise(newUsers = sum(newUsers), returningUsers = sum(returningUsers), users = sum(users), adCost=sum(adCost, na.rm=T), bounces=sum(bounces)) %>% ggplot(aes(x=adCost, y=bounces, color=programa)) + geom_point(aes(size = users)) + 
+  geom_text_repel(aes(label = factor(nombre)), color = '#212121' ,box.padding = unit(0.55, "lines")) + 
+  # geom_label_repel(aes(label = factor(nombre)), box.padding = unit(.55, "lines"),point.padding = unit(0.5, "lines"), segment.color = '#666666') +
+  # scale_color_discrete(name = 'nombre') 
+  scale_colour_manual(name = "nombre",   values = c("#ffa700", "#008744", "#d62d20")) +
+  xlab("Inversión publicitaria") +
+  ylab("Rebotes") + 
+  labs(title="Análisis de abandonos", subtitle= "", caption = "Fuente: Google Analytics") +
+  theme_ipsum_rc(grid='', axis=F, ticks = F, grid_col = "#eeeeee") +theme( legend.position = "bottom")
+```
+
+## Análisis exploratorio CTR
+
+```{r, fig.height=8, fig.width=12, message=FALSE, warning=FALSE}
+campanas %>% ggplot(aes(x=reorder(factor(nombre),ctr), y=ctr)) + geom_boxplot(aes(color=programa)) + coord_flip() +
+  xlab("") +
+  ylab("CTR") + 
+  labs(title="Click Through Rates", subtitle= "CTR por campaña", caption = "Fuente: Google Analytics") +
+  theme_ipsum_rc(grid='Xx', axis=T, ticks = F, grid_col = "#eeeeee") +theme( legend.position = "bottom")
+```
+
+
+## Análisis exploratorio: Inversión
+
+```{r, fig.height=8, fig.width=12, message=FALSE, warning=FALSE}
+campanas %>%  mutate(returningUsers = users - newUsers) %>% group_by(programa, nombre) %>% 
+summarise(newUsers = sum(newUsers), returningUsers = sum(returningUsers), users = sum(users), adCost=sum(adCost, na.rm=T), bounces=sum(bounces)) %>% ggplot(aes(x=adCost, y=newUsers, color=programa)) + geom_point(aes(size = users)) + 
+  geom_text_repel(aes(label = factor(nombre)), color = '#212121' ,box.padding = unit(0.55, "lines")) + 
+  # geom_label_repel(aes(label = factor(nombre)), box.padding = unit(.55, "lines"),point.padding = unit(0.5, "lines"), segment.color = '#666666') +
+  # scale_color_discrete(name = 'nombre') 
+  scale_colour_manual(name = "nombre",   values = c("#ffa700", "#008744", "#d62d20")) +
+  xlab("Inversión publicitaria") +
+  ylab("# Nuevos usuarios") + 
+  labs(title="Análisis de la captación", subtitle= "", caption = "Fuente: Google Analytics") +
+  theme_ipsum_rc(grid='', axis=F, ticks = F, grid_col = "#eeeeee") +theme( legend.position = "bottom")
+```
+## ANOVA
+
+```{r, echo=TRUE}
+plotmeans(newUsers ~ ciudad, data=campanas, digits=2, ccol='red', mean.labels=T, main="Plot of breast cancer means by continent")
+```
+
+```{r, echo=TRUE}
+aov_campanas <- aov(campanas$newUsers ~ campanas$ciudad)
+summary(aov_campanas)
 ```
 
 
