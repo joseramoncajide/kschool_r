@@ -28,6 +28,8 @@ ggplot(mapping = aes(y = vector_y, x = vector_x))  + geom_point()
 
 # Importamos datos --------------------------------------------------------
 
+read_csv('/Users/JOSE/Documents/GitHub/kschool_r/03-Data-Viz/data/adwords.csv')
+
 mis_datos <- read_csv('03-Data-Viz/data/adwords.csv')
 
 summary(mis_datos)
@@ -149,7 +151,7 @@ nuevos_usuarios <- mis_datos %>%
   group_by(nombre, programa) %>% 
   summarise(newUsers = sum(newUsers)) 
 
-ggplot(mis_datos, aes(x = nombre, y = newUsers, fill = programa)) +
+ggplot(nuevos_usuarios, aes(x = nombre, y = newUsers, fill = programa)) +
   geom_bar(stat = 'identity') +
   coord_flip()
 

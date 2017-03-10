@@ -23,6 +23,7 @@ mis_datos %>%
   layer_points()
 
 mis_datos %>% 
-  ggvis(x = ~impressions, y = ~adClicks, fill = ~nombre) %>% filter(users > eval(input_slider(min(mis_datos$users), max(mis_datos$users)))) %>% layer_points()
+  ggvis(x = ~impressions, y = ~adClicks, fill = ~nombre) %>% 
+  filter(users > eval(input_slider(min(mis_datos$users), max(mis_datos$users)))) %>% layer_points()
 
 
