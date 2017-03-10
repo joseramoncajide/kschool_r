@@ -1,8 +1,7 @@
 ###########################################################################
-# jose@elartedemedir.com, 2017-03
+# @jrcajide, 2017-03
 # ggplot
 ##########################################################################
-
 
 # Intalación y carga de librerías necesarias ------------------------------
 
@@ -39,6 +38,8 @@ dim(mis_datos)
 
 View(mis_datos)
 
+
+# Basics ------------------------------------------------------------------
 
 ggplot(mis_datos, aes(y = adClicks, x = impressions))
 
@@ -82,7 +83,6 @@ ggplot(mis_datos, aes(y = adClicks, x = programa)) + geom_bar(stat="identity")
 ggplot(mis_datos, aes(y = adClicks, x = programa, fill = ciudad)) + geom_bar(stat="identity")
 ggplot(mis_datos, aes(y = adClicks, x = programa, fill = ciudad)) + geom_bar(stat="identity", position = 'dodge')
 ggplot(mis_datos, aes(y = adClicks, x = programa, fill = ciudad)) + geom_bar(stat="identity", position = 'fill') 
-
 
 ggplot(mis_datos, aes(x = factor(1), fill = ciudad)) + geom_bar(width = 1) 
 ggplot(mis_datos, aes(x = factor(1), fill = ciudad)) + geom_bar(width = 1) + coord_polar(theta = "y")
@@ -240,4 +240,7 @@ final <- base +
 ggsave("my_plot.png", final)
 ggsave("my_plot.pdf", final)
 ggsave("my_plot.png", width = 6, height = 4)
+
+
+
 

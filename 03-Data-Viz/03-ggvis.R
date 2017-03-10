@@ -1,8 +1,7 @@
 ###########################################################################
-# jose@elartedemedir.com, 2017-03
-# ggplot
+# @jrcajide, 2017-03
+# ggvis
 ##########################################################################
-
 
 # Intalación y carga de librerías necesarias ------------------------------
 
@@ -19,11 +18,9 @@ mis_datos %>%
   ggvis(x = ~impressions, y = ~adClicks) %>% 
   layer_points()
 
-
 mis_datos %>% 
   ggvis(x = ~impressions, y = ~adClicks, fill = ~nombre) %>% 
   layer_points()
-
 
 mis_datos %>% 
   ggvis(x = ~impressions, y = ~adClicks, fill = ~nombre) %>% filter(users > eval(input_slider(min(mis_datos$users), max(mis_datos$users)))) %>% layer_points()
