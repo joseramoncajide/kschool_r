@@ -34,8 +34,6 @@ knitr::opts_chunk$set(echo = FALSE)
 - Analizar el rendimiento de las campañas de Google Adwords
 - Saber si dichas campañas impactan en igual medida en usuarios nuevos como recurrentes.
 
-> Prueba
-
 ## El origen de los datos 
 
 
@@ -44,14 +42,12 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Cargamos las librerías necesarias
 
-```{r}
+```{r, message=FALSE, warning=FALSE, include=FALSE}
 list.of.packages <- c("tidyverse", "tsoutliers", "lubridate", "hrbrthemes", "CausalImpact", "googleAnalyticsR", "ggrepel", "ggalt", "gridExtra", "broom", "knitr", "gplots")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 lapply(list.of.packages, require, character.only = TRUE)
 ```
-
-
 
 
 ## Extracción de datos de Google Analytics
@@ -63,8 +59,6 @@ Objetivo:
  
 ## Sol:
 
-
-
 ```{r, message=FALSE, warning=FALSE, cache=TRUE}
 ga_auth()
 usuarios_desde_google_adwords <- google_analytics(id = "46728973",
@@ -75,9 +69,7 @@ usuarios_desde_google_adwords <- google_analytics(id = "46728973",
                             sort = c("ga:date"),
                             max=99999999, samplingLevel="HIGHER_PRECISION"
 )
-
 # usuarios_desde_google_adwords <- read_csv('data/usuarios_desde_google_adwords.csv')
-
 knitr::kable(head(usuarios_desde_google_adwords))
 ```
 
@@ -105,20 +97,15 @@ costes_google_adwords <- google_analytics(id = "46728973",
                           sort = c("ga:date"),
                           max=99999999, samplingLevel="HIGHER_PRECISION"
 )
-
 # costes_google_adwords <- read_csv('data/costes_adwords.csv')
-
 knitr::kable(head(costes_google_adwords))
 ```
 
-```{r}
-
-```
 
 
-## Unión de los conjuntos de datos
+## Unión de ambos conjuntos de datos
 
-![Tipos básicos de joins](./figures/join-outer.png){.full}
+![](./figures/join-outer.png){.full}
 
 
 ## Unimos ambos data frames
@@ -146,8 +133,6 @@ usuarios_costes_google_adwords <- left_join(usuarios_desde_google_adwords,
 knitr::kable(head(usuarios_costes_google_adwords, 2))
 ```
 
-
-
 ## Análisis exploratorio inicial
 
 ```{r}
@@ -158,7 +143,7 @@ summary(usuarios_costes_google_adwords)
 
 Todo análisis de serie temporal univariante, comienza con la presentación de un grafico donde se muestra la evolución de la variable a lo largo del tiempo.
 
-```{r, fig.height=4, fig.width=5}
+```{r, fig.height=3, fig.width=5}
 usuarios_costes_google_adwords %>% 
   ggplot(aes( x= date, y= newUsers)) + geom_line()
 
@@ -166,11 +151,13 @@ usuarios_costes_google_adwords %>%
   ggplot(aes( x= date, y= returningUsers)) + geom_line()
 ```
 
+¿Són similares ambas series?
+
 ## Análisis descriptivo de una serie temporal
 
 ¿Y ahora?
 
-```{r, fig.height=4, fig.width=5}
+```{r, fig.height=3, fig.width=5}
 usuarios_costes_google_adwords %>% 
   ggplot(aes( x= date, y= newUsers)) + 
   geom_line() +
@@ -183,8 +170,6 @@ usuarios_costes_google_adwords %>%
 ```
 
 ## Análisis descriptivo de una serie temporal
-
-
 
 ```{r, fig.height=8, fig.width=12}
 usuarios_costes_google_adwords %>% 
@@ -263,11 +248,22 @@ usuarios_costes_google_adwords %>%
   theme( legend.position = "bottom")
 ```
 
+## Preguntas a responder:
+
+- ¿Exsite relación entre la *inversión* y el número de *nuevos usuarios* adquiridos?
+
+- ¿Cómo de fuerte es la relación entre ambas variables?
+
+- ¿Qué campaña contribuye más a la adquisición de nuevos usuarios?
+
+- ¿Cón qué precisión podemos estimar el efecto de cada campaña?
+
+- ¿Con qué seguridad podemos predecir el número de nuevos usuarios en el futuro?
+
+- ¿Es una relación lineal?
+
 ## Modelos de regresión
 
-Bla bla
-
-## Modelos de regresión
 ¿Cómo influye la inversión en la adquisición?
 
 ```{r, echo=TRUE, fig.height=4, fig.width=6}
@@ -326,7 +322,7 @@ usuarios_costes_google_adwords %>%
   geom_hline(aes(yintercept=mean(y)), color="blue", size=1.1)
 ```
 
-## Debemo tener en cuenta la inversión
+## Debemos tener en cuenta la inversión
 
 $$\hat y = f(x)$$
 
@@ -386,10 +382,8 @@ Su nombre técnico: **modelo de regresión**.
 
 
 
-## dd
+## Un ejemplo
 
-y[1:5]
-x[1:5]
 ```{r}
 muestra_de_x <- x[1:3]
 muestra_de_y <- y[1:3]
@@ -398,10 +392,11 @@ cpa_medio <- (152 + 161 + 128) / (19 + 24 + 13)
 cpa_medio <- sum(muestra_de_x) / sum(muestra_de_y)
 
 # El CPA (un usuario)
-1/pendiente_muestra
+(1/pendiente_muestra)
 
 ```
-## dd
+## 
+
 ```{r, fig.height=8, fig.width=12, cache=TRUE}
 sub_titulo <- paste0("Coste por adquisición de un nuevo usuario: ", round(1/pendiente_muestra,2), "€")
 ecuacion = paste0("Nuevos usuarios = ", round(pendiente_muestra,2), " * Inversión en €" )
@@ -607,6 +602,10 @@ ggplot() +
 
 ## Ejercicio
 
+Haz una regresión lineal que explique la influencia del gasto publicitario sobre los usuarios recurrentes. Compara los resultados con el anterior modelo.
+
+- ¿En que usuarios produce más efecto la inversión en Adwords?
+
 ```{r, eval=FALSE, include=FALSE}
 returning_users.lm <- lm(returningUsers ~ adCost, data = ga_data)
 
@@ -614,17 +613,15 @@ summary(returning_users.lm)
 
 coef(returning_users.lm)
 
-# Coeficientes. Compara la pendiente de ambas rectas. ¿En que usuarios produce más efecto la inversión en Adwords?
-
 coef(new_users.lm)[2] > coef(returning_users.lm)[2]
 ```
 
 
-# Nueva pregunta
+# Impacto de las campañas por tipo de usuario
 
-## Compartiva de usarios
+Queremos constatar que las campañas presentan un comportamiento diferente en cuanto al número de usuarios nuevos y recurrentes. 
 
-Queremos constatar que las campañas presentan un comportamiento diferente en cuanto al número de usuarios nuevos y recurrentes. Si ambas atraen tanto a nuevos y recurrentes por igual esto puede indicar que estamos en una situación de canibalización e impactamos y tenemos usuarios que ya nos conocen haciendo click en nuestros anuncios.
+Si ambas atraen tanto a nuevos y recurrentes por igual esto puede indicar que estamos en una situación de canibalización e impactamos y tenemos a usuarios que ya nos conocen haciendo click en nuestros anuncios.
 
 
 ```{r, echo=TRUE}
@@ -694,8 +691,7 @@ usuarios_desde_google_adwords %>%
 t.test(usuarios_desde_google_adwords$newUsers, usuarios_desde_google_adwords$returningUsers)
 ```
 
-TODO: conclusión
-http://stats.stackexchange.com/questions/210217/how-do-i-interpret-these-results-from-a-paired-t-test
+El p-valor es menor que 0.5 por lo cual rechazamos la hipótesis nula $H_0$ de que las medias son iguales.
 
 # Series temporales
 
@@ -755,7 +751,6 @@ new_users_outliers %>% ggplot(aes( x= date, y= newUsers)) + geom_xspline(color="
   geom_encircle(data=outliers.sub2, colour="#d62d20", expand=0.1) +
   # scale_color_discrete(name = 'type') +
   scale_colour_manual(name = "",   values = c('IO'="#ffa700", 'LS'="#008744", 'AO'="#d62d20"), labels = c("IO: Punto precursor del cambio", "AO: Extremo", "LS: Cambio de nivel")) +
-  # scale_colour_manual(name = "Detected changes:",   values = c('IO'="#ffa700", 'LS'="#008744", 'AO'="#d62d20"), labels = c("IO: Innovational", "LS: Shift", "AO: Additive")) +
   scale_x_date(labels = scales::date_format("%m/%Y"), breaks = scales::date_breaks("month"), date_minor_breaks = "1 week") +
   xlab("") +
   ylim(0,150) +
@@ -795,11 +790,11 @@ plot(impact)
 summary(impact, "report")
 ```
 
-# Análisis de campañas
+# Análisis individualizado de las campañas
 
 - Vamos a analizar en detalle el rendimiento de las campañas de Google Adwords
 - Seguimos teniendo como variable objetivo los **nuevos usuarios**
-- Realizaremos un análisis descriptico para tratar de explicar que cursos funcionan mejor que otros.
+- Realizaremos un análisis descriptivo que trate de explicar que campañas funcionan mejor y cuales peor.
 
 ## Obtención de nuevos datos
 
@@ -820,17 +815,9 @@ google_adwords_metricas <- google_analytics(id = "46728973",
 knitr::kable(head(google_adwords_metricas))
 ```
 
-##TODO hacer primero limpieza y separación de campañas
+## Datos de costes
 
 ```{r, echo=TRUE, message=FALSE, warning=FALSE, cache=T}
-costes_por_campana <- google_analytics(id = "46728973",
-                          start="2016-09-01", end="2017-03-05",
-                          metrics = c("ga:impressions,ga:adClicks,ga:adCost,ga:cpc"),
-                          dimensions = c("ga:date","ga:campaign"),
-                          segment = NULL,
-                          sort = c("ga:date"),
-                          max=99999999, 
-                          samplingLevel="HIGHER_PRECISION")
 
 costes_por_campana <- read_csv('data/costes_por_campana.csv')
 
@@ -888,14 +875,20 @@ Comprobamos la existencia de valores nulos
 summary(campanas)
 ```
 
-Son NA generados por la ausencia de datos en el dataset `costes_por_campana`. Podemo omitirlos:
+Son NA generados por la ausencia de datos en el dataset `costes_por_campana`.
+
+## Tratamiento de datos: Omitimos los nulos.
 
 ```{r, echo=TRUE}
 campanas <- campanas %>% na.omit
 ```
 
-## Análisis exploratorio: CPC
+```{r}
+summary(campanas)
+```
 
+
+## Análisis exploratorio: CPC
 
 ```{r, fig.height=8, fig.width=12, message=FALSE, warning=FALSE}
 campanas %>% ggplot(aes(x=nombre, y=cpc, color=programa)) + geom_boxplot() + facet_wrap(~ciudad) + coord_flip() +
@@ -945,6 +938,7 @@ summarise(newUsers = sum(newUsers), returningUsers = sum(returningUsers), users 
   labs(title="Análisis de la captación", subtitle= "", caption = "Fuente: Google Analytics") +
   theme_ipsum_rc(grid='', axis=F, ticks = F, grid_col = "#eeeeee") +theme( legend.position = "bottom")
 ```
+
 ## ANOVA
 
 ```{r, echo=TRUE}
@@ -955,5 +949,140 @@ plotmeans(newUsers ~ ciudad, data=campanas, digits=2, ccol='red', mean.labels=T,
 aov_campanas <- aov(campanas$newUsers ~ campanas$ciudad)
 summary(aov_campanas)
 ```
+
+El p-valor es menor que .05, por lo que aceptamos la hipótesis $H_1$ the que hay una relación significativa entre cada ciudad y la captación de nuevos usuarios.
+
+## Comparando la medias
+
+EL test de Tukey
+
+```{r, echo=TRUE}
+(tukey <- TukeyHSD(aov_campanas))
+```
+
+Un p-valor < .05 indica que hay una diferencia significativa entre ambas ciudades. Si es mayor, que no la hay.
+
+##  
+
+Los líneas que no contienen el 0 representan aquellas ciudades en las que hay diferencias significativas.
+
+```{r, echo=TRUE}
+plot(tukey)
+```
+
+```{r, fig.height=8, fig.width=12, message=FALSE, warning=FALSE}
+tky = as.data.frame(tukey$`campanas$ciudad`)
+tky$pair = rownames(tky)
+
+# Plot pairwise TukeyHSD comparisons and color by significance level
+ggplot(tky, aes(colour=cut(`p adj`, c(0, 0.01, 0.05, 1), 
+                           label=c("p<0.01","p<0.05","Non-Sig")))) +
+  geom_hline(yintercept=0, lty="11", colour="grey30") +
+  geom_errorbar(aes(pair, ymin=lwr, ymax=upr), width=0.2) +
+  geom_point(aes(pair, diff)) +
+  labs(colour="") + coord_flip() +
+  xlab("") +
+  ylab("") + 
+  labs(title="Adquisción media de usuarios por área", subtitle= "En verde y rojo aquellas áreas con diferencias significativas", caption = "Intervalos de confianza de Tukey con niveles de confianza individuales de 95%") +
+  theme_ipsum_rc(grid='Xx', axis=T, ticks = F, grid_col = "#eeeeee") +theme( legend.position = "bottom")
+
+```
+
+## Comparación de dos medias
+
+```{r echo =T}
+masters_aw_ds <- campanas %>% 
+  dplyr::filter(nombre %in% c("ANALITICA WEB" , "DATA SCIENCE"))
+
+masters_aw_ds <- masters_aw_ds %>% 
+  mutate(ctr = adClicks / impressions) 
+
+masters_aw_ds %>% 
+  group_by(nombre) %>% 
+  summarise(avg_ctr = mean(ctr, na.rm = T))
+```
+
+```{r}
+knitr::kable(head(masters_aw_ds %>% group_by(nombre) %>% summarise(avg_ctr = mean(ctr, na.rm = T))))
+```
+
+##
+
+```{r, fig.height=8, fig.width=12, message=FALSE, warning=FALSE}
+masters_aw_ds %>% ggplot(aes(x=reorder(factor(nombre),ctr), y=ctr)) + geom_boxplot(color="#2196F3") + 
+  xlab("") +
+  ylab("CTR") + 
+  labs(title="Comparativa de medias de Click Through Rates", subtitle= "¿Podemos afirmar que los anuncios de #DataScience tienen un CTR menor que los de #AnaliticaWeb?\n", caption = "-¿Son las creatividades o los textos para AW más impactantes?\n-¿Son los futuros científicos de datos menos propensos a realizar click?\n-¿Es más fuerte la competencia en Adwords para DS que para AW?") +
+  theme_ipsum_rc(grid='Yy', axis=F, ticks = F, grid_col = "#eeeeee") +theme( legend.position = "bottom")
+```
+
+## Extraremos los vectores
+
+```{r echo=T}
+# Vectores
+ctr_aw <- masters_aw_ds %>% 
+  filter(nombre == "ANALITICA WEB") %>% 
+  dplyr::select(ctr) %>% unlist()
+
+ctr_ds <- masters_aw_ds %>% 
+  filter(nombre == "DATA SCIENCE") %>% 
+  dplyr::select(ctr) %>% unlist()
+```
+
+```{r, fig.height=8, fig.width=12, message=FALSE, warning=FALSE}
+par(mfrow=c(1, 2))
+plot(density(ctr_aw, na.rm = T), main="Analítica web")
+plot(density(ctr_ds, na.rm = T), main="Data Science")
+par(old.par)
+```
+
+## 
+```{r}
+masters_aw_ds %>% dplyr::select(nombre, ctr) %>%  gather(key='nombre', value="ctr") %>% ggplot(aes(x=ctr, color=nombre)) + geom_density(aes(fill=nombre), size=0, alpha=.9, color="red") +
+  scale_fill_manual(name = "", values = c('ANALITICA WEB'="#CCCCCC", 'DATA SCIENCE'="#0057e7"), labels = c("ANALITICA WEB", "DATA SCIENCE")) +
+  xlab("") +
+  ylab("# usuarios") + 
+  labs(title="CTR medio por master", subtitle= "", caption = "Fuente: Google Analytics") +
+  theme_ipsum_rc(grid='Y', axis=F, ticks = F, grid_col = "#eeeeee") +theme( legend.position = "bottom")
+```
+
+## Medidas de centralidad y dispersión
+
+```{r, echo=TRUE}
+mean(ctr_aw, na.rm = T)
+mean(ctr_ds, na.rm = T)
+
+var(ctr_aw, na.rm = T);
+var(ctr_ds, na.rm = T)
+
+sd(ctr_aw, na.rm = T)
+sd(ctr_ds, na.rm = T)
+```
+
+## Test de la varianza
+
+```{r, echo=TRUE}
+var.test(ctr_aw,ctr_ds)
+```
+
+El p-value < 0.05 implica rechazar H0 y por lo tanto ambas varianzas no son iguales. (La variazión de CTR es disinto para cada campaña).
+
+## Test de normalidad de los datos
+
+```{r}
+shapiro.test(ctr_aw); shapiro.test(ctr_ds)
+```
+
+En ambos casos el p-value es menor que 0.05 , por lo que rechazamos la hipótesis nula de que el CTR sigue una distribución normal en ambos grupos de usuarios.
+
+Debido a esto no podemos aplicar un `t.test(ctr_aw, ctr_ds)`
+
+## Teste de Wilcox
+```{r, echo=TRUE}
+wilcox.test(ctr_aw, ctr_ds)
+```
+
+Como el p-value < 0.5, rechazamos la hipótesis nula y por lo tanto ambas poblaciones (camapañas) son disintas.
+
 
 

@@ -29,7 +29,7 @@ x
 x <- c(1, 2, 3)
 x
 length(x)
-x1 <- c(1, 2, 3)
+# x <- c(1, 2, 3)
 y <- c(TRUE, TRUE, FALSE, FALSE)
 z <- c("Oro", "Plata", "Bronce", "Cobre")
 class(z)
@@ -104,7 +104,7 @@ length(x)
 ## ------------------------------------------------------------------------
 xlist <- list(a = "Conjunto de datos iris", b = 1:10, data = head(iris))
 xlist
-xlist$b
+xlist$data
 
 ## ------------------------------------------------------------------------
 sexo <- factor(c("masculino", "femenino", "femenino", "masculino"))
@@ -114,7 +114,7 @@ nlevels(sexo)
 # Orden de los factores
 tallas <- factor(c("s", "xl", "m", "xl", "s", "m", "xl"))
 levels(tallas)
-tallas <- factor(tallas, levels=c("s", "m", "xl"))
+# tallas <- factor(tallas, levels=c("s", "m", "xl"))
 levels(tallas)
 
 
@@ -140,6 +140,7 @@ as.character(tallas)
 ## ------------------------------------------------------------------------
 df <- data.frame(id = letters[1:10], x = 1:10, y = rnorm(10))
 df
+data.frame(z = 4)
 # agregar nuevas variables
 cbind(df, data.frame(z = 4))
 
@@ -227,8 +228,8 @@ a[0, -2]
 df <-
   data.frame(
     month = month.name[1:12],
-    sesiones = round(rnorm(12, mean = 400, sd = 10), 2),
-    transacciones = round(rnorm(12, mean = 20, sd = 4), 2)
+    sesiones = round(rnorm(12, mean = 400, sd = 10), 0),
+    transacciones = round(rnorm(12, mean = 20, sd = 4), 0)
   )
 str(df)
 
