@@ -4,7 +4,7 @@ Manipulación de datos en R con dplyr
 
 ``` r
 # Cargamos la librerías necesarias
-list.of.packages <- c("tidyverse")
+list.of.packages <- c("tidyverse", "maps")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 lapply(list.of.packages, require, character.only = TRUE)
@@ -28,7 +28,19 @@ lapply(list.of.packages, require, character.only = TRUE)
     ## filter(): dplyr, stats
     ## lag():    dplyr, stats
 
+    ## Loading required package: maps
+
+    ## 
+    ## Attaching package: 'maps'
+
+    ## The following object is masked from 'package:purrr':
+    ## 
+    ##     map
+
     ## [[1]]
+    ## [1] TRUE
+    ## 
+    ## [[2]]
     ## [1] TRUE
 
 ¿Porqué dplyr?
@@ -53,12 +65,11 @@ Cargando dplyr y el conjunto de datos
 -   Con `tbl_df` convertiremos los datos a "local data frame"
 
 ``` r
-suppressMessages(library(dplyr))
-library(ggplot2)
-
 # Cargamos el fichero de datos
-flights <- read_csv("data/669307277_T_ONTIME.csv")
+flights <- read_csv("data/669307277_T_ONTIME.csv.zip")
 ```
+
+    ## Multiple files in zip: reading '669307277_T_ONTIME.csv'
 
     ## Warning: Missing column names filled in: 'X18' [18]
 
@@ -89,51 +100,6 @@ print(object.size(get('flights')), units='auto')
 ```
 
     ## 57 Mb
-
-``` r
-# Compara: Escribe flights 
-flights
-```
-
-    ## # A tibble: 479,230 × 18
-    ##     YEAR QUARTER MONTH DAY_OF_MONTH CARRIER TAIL_NUM FL_NUM ORIGIN  DEST
-    ##    <int>   <int> <int>        <int>   <chr>    <chr>  <int>  <chr> <chr>
-    ## 1   2015       4    12            1      AA   N783AA      1    JFK   LAX
-    ## 2   2015       4    12            2      AA   N785AA      1    JFK   LAX
-    ## 3   2015       4    12            3      AA   N795AA      1    JFK   LAX
-    ## 4   2015       4    12            5      AA   N787AA      1    JFK   LAX
-    ## 5   2015       4    12            7      AA   N784AA      1    JFK   LAX
-    ## 6   2015       4    12            8      AA   N799AA      1    JFK   LAX
-    ## 7   2015       4    12            9      AA   N795AA      1    JFK   LAX
-    ## 8   2015       4    12           10      AA   N793AA      1    JFK   LAX
-    ## 9   2015       4    12           12      AA   N791AA      1    JFK   LAX
-    ## 10  2015       4    12           14      AA   N785AA      1    JFK   LAX
-    ## # ... with 479,220 more rows, and 9 more variables: DEP_TIME <chr>,
-    ## #   DEP_DELAY <dbl>, ARR_TIME <chr>, ARR_DELAY <dbl>, CANCELLED <dbl>,
-    ## #   DIVERTED <dbl>, AIR_TIME <dbl>, DISTANCE <dbl>, X18 <chr>
-
-``` r
-# Vs 
-flights <- tbl_df(flights)
-flights
-```
-
-    ## # A tibble: 479,230 × 18
-    ##     YEAR QUARTER MONTH DAY_OF_MONTH CARRIER TAIL_NUM FL_NUM ORIGIN  DEST
-    ##    <int>   <int> <int>        <int>   <chr>    <chr>  <int>  <chr> <chr>
-    ## 1   2015       4    12            1      AA   N783AA      1    JFK   LAX
-    ## 2   2015       4    12            2      AA   N785AA      1    JFK   LAX
-    ## 3   2015       4    12            3      AA   N795AA      1    JFK   LAX
-    ## 4   2015       4    12            5      AA   N787AA      1    JFK   LAX
-    ## 5   2015       4    12            7      AA   N784AA      1    JFK   LAX
-    ## 6   2015       4    12            8      AA   N799AA      1    JFK   LAX
-    ## 7   2015       4    12            9      AA   N795AA      1    JFK   LAX
-    ## 8   2015       4    12           10      AA   N793AA      1    JFK   LAX
-    ## 9   2015       4    12           12      AA   N791AA      1    JFK   LAX
-    ## 10  2015       4    12           14      AA   N785AA      1    JFK   LAX
-    ## # ... with 479,220 more rows, and 9 more variables: DEP_TIME <chr>,
-    ## #   DEP_DELAY <dbl>, ARR_TIME <chr>, ARR_DELAY <dbl>, CANCELLED <dbl>,
-    ## #   DIVERTED <dbl>, AIR_TIME <dbl>, DISTANCE <dbl>, X18 <chr>
 
 ``` r
 # explora
@@ -252,7 +218,7 @@ glimpse(flights)
     ## $ X18          <chr> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N...
 
 ``` r
-flights$X <- NULL
+flights$X18 <- NULL
 ```
 
 ``` r
@@ -277,16 +243,12 @@ barplot(table(flights$DAY_OF_MONTH))
 ![](05-dplyr-flights_files/figure-markdown_github/unnamed-chunk-4-1.png)
 
 ``` r
-foo.df <- flights[flights$MONTH==12 & flights$DAY_OF_MONTH==31, ]
-```
-
-``` r
 # dplyr 
 # nota: , = AND
 filter(flights, MONTH==12, DAY_OF_MONTH==31)
 ```
 
-    ## # A tibble: 13,133 × 18
+    ## # A tibble: 13,133 × 17
     ##     YEAR QUARTER MONTH DAY_OF_MONTH CARRIER TAIL_NUM FL_NUM ORIGIN  DEST
     ##    <int>   <int> <int>        <int>   <chr>    <chr>  <int>  <chr> <chr>
     ## 1   2015       4    12           31      AA   N785AA      1    JFK   LAX
@@ -299,16 +261,16 @@ filter(flights, MONTH==12, DAY_OF_MONTH==31)
     ## 8   2015       4    12           31      AA   N858AA     14    OGG   LAX
     ## 9   2015       4    12           31      AA   N791AA     17    JFK   SFO
     ## 10  2015       4    12           31      AA   N788AA     19    JFK   LAX
-    ## # ... with 13,123 more rows, and 9 more variables: DEP_TIME <chr>,
+    ## # ... with 13,123 more rows, and 8 more variables: DEP_TIME <chr>,
     ## #   DEP_DELAY <dbl>, ARR_TIME <chr>, ARR_DELAY <dbl>, CANCELLED <dbl>,
-    ## #   DIVERTED <dbl>, AIR_TIME <dbl>, DISTANCE <dbl>, X18 <chr>
+    ## #   DIVERTED <dbl>, AIR_TIME <dbl>, DISTANCE <dbl>
 
 ``` r
 # nota: | = OR
 filter(flights, CARRIER=="AA" | CARRIER=="UA")
 ```
 
-    ## # A tibble: 120,005 × 18
+    ## # A tibble: 120,005 × 17
     ##     YEAR QUARTER MONTH DAY_OF_MONTH CARRIER TAIL_NUM FL_NUM ORIGIN  DEST
     ##    <int>   <int> <int>        <int>   <chr>    <chr>  <int>  <chr> <chr>
     ## 1   2015       4    12            1      AA   N783AA      1    JFK   LAX
@@ -321,18 +283,11 @@ filter(flights, CARRIER=="AA" | CARRIER=="UA")
     ## 8   2015       4    12           10      AA   N793AA      1    JFK   LAX
     ## 9   2015       4    12           12      AA   N791AA      1    JFK   LAX
     ## 10  2015       4    12           14      AA   N785AA      1    JFK   LAX
-    ## # ... with 119,995 more rows, and 9 more variables: DEP_TIME <chr>,
+    ## # ... with 119,995 more rows, and 8 more variables: DEP_TIME <chr>,
     ## #   DEP_DELAY <dbl>, ARR_TIME <chr>, ARR_DELAY <dbl>, CANCELLED <dbl>,
-    ## #   DIVERTED <dbl>, AIR_TIME <dbl>, DISTANCE <dbl>, X18 <chr>
+    ## #   DIVERTED <dbl>, AIR_TIME <dbl>, DISTANCE <dbl>
 
 ``` r
-# también podemos usar %in% 
-# boxplot(flights$DEP_DELAY)
-# foo <- boxplot(flights$DEP_DELAY, plot = F)
-# foo$out
-# outliers <- boxplot(flights$DEP_DELAY, plot = F)$out
-# sinoutliers <- filter(flights, DEP_DELAY %in% outliers)
-# boxplot(sinoutliers$DEP_DELAY)
 filter(flights, CARRIER %in% c("AA", "UA"))
 ```
 
@@ -493,7 +448,7 @@ flights %>% select(DISTANCE, AIR_TIME) %>%
 flights %>% mutate(SPEED = DISTANCE/AIR_TIME*60)
 ```
 
-    ## # A tibble: 479,230 × 19
+    ## # A tibble: 479,230 × 18
     ##     YEAR QUARTER MONTH DAY_OF_MONTH CARRIER TAIL_NUM FL_NUM ORIGIN  DEST
     ##    <int>   <int> <int>        <int>   <chr>    <chr>  <int>  <chr> <chr>
     ## 1   2015       4    12            1      AA   N783AA      1    JFK   LAX
@@ -506,9 +461,9 @@ flights %>% mutate(SPEED = DISTANCE/AIR_TIME*60)
     ## 8   2015       4    12           10      AA   N793AA      1    JFK   LAX
     ## 9   2015       4    12           12      AA   N791AA      1    JFK   LAX
     ## 10  2015       4    12           14      AA   N785AA      1    JFK   LAX
-    ## # ... with 479,220 more rows, and 10 more variables: DEP_TIME <chr>,
+    ## # ... with 479,220 more rows, and 9 more variables: DEP_TIME <chr>,
     ## #   DEP_DELAY <dbl>, ARR_TIME <chr>, ARR_DELAY <dbl>, CANCELLED <dbl>,
-    ## #   DIVERTED <dbl>, AIR_TIME <dbl>, DISTANCE <dbl>, X18 <chr>, SPEED <dbl>
+    ## #   DIVERTED <dbl>, AIR_TIME <dbl>, DISTANCE <dbl>, SPEED <dbl>
 
 summarise: Reducción de variables a valores
 -------------------------------------------
@@ -786,46 +741,46 @@ Otras funciones útiles
 flights %>% sample_n(5)
 ```
 
-    ## # A tibble: 5 × 19
+    ## # A tibble: 5 × 18
     ##    YEAR QUARTER MONTH DAY_OF_MONTH CARRIER TAIL_NUM FL_NUM ORIGIN  DEST
     ##   <int>   <int> <int>        <int>   <chr>    <chr>  <int>  <chr> <chr>
-    ## 1  2015       4    12           17      AS   N579AS    443    LAX   SEA
-    ## 2  2015       4    12           10      UA   N78501    240    SFO   MCO
-    ## 3  2015       4    12            7      AA   N3KEAA   1523    DFW   FLL
-    ## 4  2015       4    12           16      WN   N926WN    153    BWI   TPA
-    ## 5  2015       4    12            5      AA   N750UW    896    PHX   DSM
-    ## # ... with 10 more variables: DEP_TIME <chr>, DEP_DELAY <dbl>,
+    ## 1  2015       4    12           29      AA   N3KLAA   1439    BNA   DFW
+    ## 2  2015       4    12           21      DL   N813DN   1554    LAX   ATL
+    ## 3  2015       4    12           21      WN   N214WN    264    ATL   JAX
+    ## 4  2015       4    12           27      DL   N977AT   1398    ATL   MHT
+    ## 5  2015       4    12           10      AA   N114UW   1769    CLT   MCI
+    ## # ... with 9 more variables: DEP_TIME <chr>, DEP_DELAY <dbl>,
     ## #   ARR_TIME <chr>, ARR_DELAY <dbl>, CANCELLED <dbl>, DIVERTED <dbl>,
-    ## #   AIR_TIME <dbl>, DISTANCE <dbl>, X18 <chr>, SPEED <dbl>
+    ## #   AIR_TIME <dbl>, DISTANCE <dbl>, SPEED <dbl>
 
 ``` r
 # muestra aleatoria con reemplazo
 flights %>% sample_frac(0.25, replace=TRUE)
 ```
 
-    ## # A tibble: 119,808 × 19
+    ## # A tibble: 119,808 × 18
     ##     YEAR QUARTER MONTH DAY_OF_MONTH CARRIER TAIL_NUM FL_NUM ORIGIN  DEST
     ##    <int>   <int> <int>        <int>   <chr>    <chr>  <int>  <chr> <chr>
-    ## 1   2015       4    12            2      AA   N3EJAA   1096    MCO   ORD
-    ## 2   2015       4    12           29      UA   N36272    567    IAD   SFO
-    ## 3   2015       4    12           25      WN   N7831B   1655    OAK   PHX
-    ## 4   2015       4    12            6      UA   N410UA    698    ORD   LGA
-    ## 5   2015       4    12           19      WN   N925WN   2008    ALB   BWI
-    ## 6   2015       4    12           11      DL   N920DN   2297    ATL   JAX
-    ## 7   2015       4    12           24      OO   N133SY   5195    SLC   SFO
-    ## 8   2015       4    12            6      UA   N854UA    241    ATL   ORD
-    ## 9   2015       4    12           30      WN   N495WN    431    DEN   BUR
-    ## 10  2015       4    12           27      EV   N926EV   5602    ATL   LFT
-    ## # ... with 119,798 more rows, and 10 more variables: DEP_TIME <chr>,
+    ## 1   2015       4    12           26      AA   N956UW   2145    LGA   DCA
+    ## 2   2015       4    12           24      EV   N754EV   5198    OKC   MSP
+    ## 3   2015       4    12            8      DL   N941DL    423    JFK   ATL
+    ## 4   2015       4    12           11      DL   N538US   1735    LIH   LAX
+    ## 5   2015       4    12           10      OO   N453SW   4539    TUS   SLC
+    ## 6   2015       4    12           26      WN   N239WN   3439    ATL   DCA
+    ## 7   2015       4    12           24      AA   N3CDAA     93    ORD   LAS
+    ## 8   2015       4    12           11      OO   N943SW   5478    DEN   LAR
+    ## 9   2015       4    12           13      WN   N560WN    659    BUR   SJC
+    ## 10  2015       4    12           23      EV   N13566   4399    MAF   IAH
+    ## # ... with 119,798 more rows, and 9 more variables: DEP_TIME <chr>,
     ## #   DEP_DELAY <dbl>, ARR_TIME <chr>, ARR_DELAY <dbl>, CANCELLED <dbl>,
-    ## #   DIVERTED <dbl>, AIR_TIME <dbl>, DISTANCE <dbl>, X18 <chr>, SPEED <dbl>
+    ## #   DIVERTED <dbl>, AIR_TIME <dbl>, DISTANCE <dbl>, SPEED <dbl>
 
 Joins
 -----
 
 ``` r
 #Cargamos un nuevo conjunot de datos
-airports <- tbl_df(read_csv("data/airports.csv"))
+airports <- read_csv("data/airports.csv")
 ```
 
     ## Parsed with column specification:
@@ -902,17 +857,8 @@ ggplot(delays, aes(long, lat)) +
   coord_quickmap()
 ```
 
-    ## 
-    ## Attaching package: 'maps'
-
-    ## The following object is masked from 'package:purrr':
-    ## 
-    ##     map
-
 ![](05-dplyr-flights_files/figure-markdown_github/unnamed-chunk-24-1.png)
 
 ``` r
 delays <- delays %>% filter(ARR_DELAY < 0)
-
-#repetimos ahora el gráfico anterior
 ```

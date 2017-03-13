@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "Análisis y modelado estadístico"
 output: 
   revealjs::revealjs_presentation:
     css: css/style.css
@@ -21,13 +21,6 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 
-# Horizontal Slide 1
-
-## Vertical Slide 1
-
-## Vertical Slide 2
-
-# Horizontal Slide 2
 
 ## Objetivo
 
@@ -42,7 +35,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Cargamos las librerías necesarias
 
-```{r, message=FALSE, warning=FALSE, include=FALSE}
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
 list.of.packages <- c("tidyverse", "tsoutliers", "lubridate", "hrbrthemes", "CausalImpact", "googleAnalyticsR", "ggrepel", "ggalt", "gridExtra", "broom", "knitr", "gplots")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
@@ -57,8 +50,6 @@ Objetivo:
 - Extraemos datos mediante la API de Analytics
 - Datos de usuarios `ga:users` y nuevos usuarios `ga:newUsers` dimensionados por fecha `ga:date` para todo el tráfico que viene a través de Google/CPC
  
-## Sol:
-
 ```{r, message=FALSE, warning=FALSE, cache=TRUE}
 ga_auth()
 usuarios_desde_google_adwords <- google_analytics(id = "46728973",
@@ -86,18 +77,10 @@ knitr::kable(head(usuarios_desde_google_adwords))
 
 ## Datos de costes
 
-Extraemos la inversión diaria realizada en pujas por palabras clave en Google Adwords.
+Cargamos el fichero con la inversión diaria realizada en pujas por palabras clave en Google Adwords.
 
 ```{r, message=FALSE, warning=FALSE, cache=T, cache=TRUE}
-costes_google_adwords <- google_analytics(id = "46728973",
-                          start="2016-09-01", end="2017-03-05",
-                          metrics = c("ga:adCost"),
-                          dimensions = c("ga:date"),
-                          segment = NULL,
-                          sort = c("ga:date"),
-                          max=99999999, samplingLevel="HIGHER_PRECISION"
-)
-# costes_google_adwords <- read_csv('data/costes_adwords.csv')
+costes_google_adwords <- read_csv('data/costes_adwords.csv')
 knitr::kable(head(costes_google_adwords))
 ```
 
@@ -938,6 +921,37 @@ summarise(newUsers = sum(newUsers), returningUsers = sum(returningUsers), users 
   labs(title="Análisis de la captación", subtitle= "", caption = "Fuente: Google Analytics") +
   theme_ipsum_rc(grid='', axis=F, ticks = F, grid_col = "#eeeeee") +theme( legend.position = "bottom")
 ```
+
+## Regresión lineal múltiple
+
+```{r}
+campanas_adwords.fit <- lm(newUsers ~  0 + adCost + nombre, data=campanas)
+summary(campanas_adwords.fit)
+```
+
+
+
+```{r, fig.height=8, fig.width=12, message=FALSE, warning=FALSE}
+campanas_adwords_res <- tidy(campanas_adwords.fit)
+r.squared <- glance(campanas_adwords.fit)$r.squared
+campanas_adwords_res$term <- tolower(campanas_adwords_res$term)
+
+trim <- function (x) gsub("^campaign", "", x)
+campanas_adwords_res$term <- trim(campanas_adwords_res$term )
+
+mejores_campanas <- subset(campanas_adwords_res, estimate > 0)
+peores_campanas <- subset(campanas_adwords_res, estimate <= 0)
+
+ggplot( ) +
+  geom_lollipop(data = campanas_adwords_res, aes(y=reorder(term, estimate), x=estimate), point.colour="#008744", point.size=2, horizontal=TRUE, color="#cccccc", alpha=.9) +
+  geom_lollipop(data = peores_campanas, aes(y=reorder(term, estimate), x=estimate), point.colour="#d62d20", point.size=2, horizontal=TRUE, color="#cccccc", alpha=.9) +
+  labs(title="Modelo de regresión lineal múltiple", subtitle= "Peso de las campañas", caption = "Cada punto representa el peso relativo de cada campaña a la hora de captar nuevos usuarios.") +
+  xlab(expression(paste("Coeficientes ", beta))) +
+  ylab("") +
+  theme_ipsum_rc(grid=F, axis=T, ticks = F)
+
+```
+
 
 ## ANOVA
 

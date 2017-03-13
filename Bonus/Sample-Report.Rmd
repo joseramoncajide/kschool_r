@@ -1,0 +1,124 @@
+---
+title: "Informe datos GA"
+author: '@jrcajide'
+date: "11/3/2017"
+output: html_document
+---
+
+# Gisela
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Instalación y carga de librerías
+
+```{r, include=FALSE}
+list.of.packages <- c("tidyverse","googleAuthR", "searchConsoleR", "tm" , "wordcloud", "googleAnalyticsR")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+lapply(list.of.packages, require, character.only = TRUE)
+```
+
+
+## Extracción de datos de Google Analytics (GA)
+
+
+```{r, message=FALSE, warning=FALSE, include=FALSE}
+ga_auth()
+#Autenticación en GA
+# ga_auth()
+# Sys.setenv("GA_AUTH_FILE" = "./.httr-oauth")
+
+start.date <- Sys.Date() - 30
+end.date <- Sys.Date() - 1
+
+keywords_ga <- google_analytics(id = "26384357",
+                                    start = Sys.Date() - 30, 
+                                    end = end.date,
+                                    metrics = c("sessions","bounces"),
+                                    dimensions = c("keyword"),
+                                    segment = c("sessions::condition::ga:medium==cpc;ga:source==google"), 
+                                    max_results = 11000)
+
+
+```
+
+
+```{r}
+knitr::kable(head(keywords_ga, 10))
+```
+
+## Análisis de Kw
+
+```{r}
+corpus <- Corpus(VectorSource(keywords_ga$keyword))
+dtm <- TermDocumentMatrix(corpus)
+freq <- colSums(as.matrix(dtm))   
+# findFreqTerms(dtm, 10)
+```
+
+**Top 10 palabras más frecuentes**
+
+```{r}
+
+m <- as.matrix(dtm)
+v <- sort(rowSums(m),decreasing=TRUE)
+d <- data.frame(word = names(v),freq=v)
+
+top_10 <- d %>% top_n(10)
+
+p <- ggplot(top_10, aes(x = reorder(word, freq), y = freq))  
+p <- p + geom_bar(stat="identity")   
+p <- p + theme(axis.text.x=element_text(angle=45, hjust=1)) 
+p <- p + coord_flip()
+p <- p + xlab("Keywords") + ylab("Frecuencia")
+print(p)   
+```
+
+Palabras relacionadas con *sujetadores*:
+
+```{r, include=FALSE}
+findAssocs(dtm, "sujetadores", corlimit=0.15)
+```
+
+
+```{r}
+sujetadores <- findAssocs(dtm, "sujetadores", corlimit=0.15)
+keywords_sujetadores <- data_frame(keyword =names(sujetadores$sujetadores),
+                                      frecuencia= sujetadores$sujetadores)
+```
+
+**Palabras asociadas a `sujetadores`**
+
+```{r}
+knitr::kable(head(keywords_sujetadores, 20))
+```
+
+
+```{r}
+wordcloud(keywords_sujetadores$keyword, colors=c(1,10), random.color=T, keywords_sujetadores$frecuencia, min.freq=2)
+```
+
+
+## Exportar los datos
+
+
+```{r}
+
+archivo <- paste0("keywords_",
+                  Sys.Date(),
+                  ".csv")
+
+# mi_archivo <- "mis_datos_ga"
+# 
+# 
+write_excel_csv(keywords_ga, archivo)
+```
+
+
+Los datos están ahora en el archivo 
+[`r archivo`](`r archivo`)
+
+
+

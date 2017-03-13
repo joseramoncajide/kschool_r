@@ -1,26 +1,21 @@
 ## ------------------------------------------------------------------------
 # Cargamos la librerías necesarias
-list.of.packages <- c("tidyverse")
+list.of.packages <- c("tidyverse", "maps")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 lapply(list.of.packages, require, character.only = TRUE)
 
 ## ------------------------------------------------------------------------
 
-suppressMessages(library(dplyr))
-library(ggplot2)
-
 # Cargamos el fichero de datos
-flights <- read_csv("05-Data-Wrangling/data/669307277_T_ONTIME.csv.zip")
+flights <- read_csv("data/669307277_T_ONTIME.csv.zip")
 
 print(object.size(get('flights')), units='auto')
-
 
 # explora
 head(flights)
 
 dim(flights)
-
 
 # estructura del dataframe en con R
 str(flights)
