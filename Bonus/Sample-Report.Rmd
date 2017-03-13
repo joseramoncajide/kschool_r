@@ -2,7 +2,7 @@
 title: "Informe datos GA"
 author: '@jrcajide'
 date: "11/3/2017"
-output: html_document
+output: github_document
 ---
 
 # Gisela
