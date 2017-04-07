@@ -90,11 +90,6 @@ flights %>%
     select(CARRIER, DEP_DELAY) %>%
     arrange(desc(DEP_DELAY))
 
-## ----results='hide'------------------------------------------------------
-# base R: Nueva variable SPEED (en mph)
-flights$SPEED <- flights$DISTANCE / flights$AIR_TIME*60
-flights[, c("DISTANCE", "AIR_TIME", "SPEED")]
-
 ## ------------------------------------------------------------------------
 # dplyr: comprobamos que es correcto
 flights %>% select(DISTANCE, AIR_TIME) %>%
@@ -102,11 +97,6 @@ flights %>% select(DISTANCE, AIR_TIME) %>%
 
 # lo guardamos
 flights %>% mutate(SPEED = DISTANCE/AIR_TIME*60)
-
-## ----results='hide'------------------------------------------------------
-# base R: retraso medio por destino
-head(with(flights, tapply(ARR_DELAY, DEST, mean, na.rm=TRUE)))
-head(aggregate(ARR_DELAY ~ DEST, flights, mean))
 
 ## ------------------------------------------------------------------------
 # dplyr:
@@ -134,10 +124,6 @@ flights %>%
     group_by(DAY_OF_MONTH) %>%
     summarise(total = n()) %>%
     arrange(desc(total)) %>% ggplot(aes(x = factor(DAY_OF_MONTH), y = total)) + geom_bar(stat = "identity") 
-# más simple
-flights %>%
-    group_by(DAY_OF_MONTH) %>%
-    tally(sort = TRUE)
 
 # número total de vuelos y número de aviones distintos que han volado a cada destino
 flights %>%
@@ -145,28 +131,10 @@ flights %>%
     summarise(total = n(), aviones = n_distinct(TAIL_NUM))
 
 ## ------------------------------------------------------------------------
-# número total de vuelos cancelados y no cancelados por destino
-flights %>%
-    group_by(DEST) %>%
-    select(CANCELLED) %>%
-    table() %>%
-    head()
-
-
-## ----results='hide'------------------------------------------------------
-# Calcular, para cada compañía, que dos días del mes han tenido mayores retrasos en la salida
-# Nota: al valor más pequeño, ranked le asigna un 1, por lo qye habrá que ordenar descendentemente DEP_DELAY para hacer un rank por el valor más grande
+# Calcular, para cada compañía, que dos días del mes que han tenido mayores retrasos en la salida
 flights %>%
     group_by(CARRIER) %>%
     select(DAY_OF_MONTH, DEP_DELAY) %>%
-    filter(min_rank(desc(DEP_DELAY)) <= 2) %>%
-    arrange(CARRIER, desc(DEP_DELAY))
-
-## ------------------------------------------------------------------------
-# más simple con `top_n`
-flights %>%
-    group_by(CARRIER) %>%
-    select(MONTH, DAY_OF_MONTH, DEP_DELAY) %>%
     top_n(2) %>%
     arrange(CARRIER, desc(DEP_DELAY))
 
@@ -186,13 +154,8 @@ flights %>%
     mutate_each(funs(pct), flight_count)
 
 ## ------------------------------------------------------------------------
-# muestra aleatoria sin reemplazo
+# muestra aleatoria
 flights %>% sample_n(5)
-
-# muestra aleatoria con reemplazo
-flights %>% sample_frac(0.25, replace=TRUE)
-
-
 
 ## ------------------------------------------------------------------------
 #Cargamos un nuevo conjunot de datos
@@ -206,14 +169,18 @@ location
 delays <- flights %>%
   group_by(DEST) %>%
   summarise(ARR_DELAY = mean(ARR_DELAY, na.rm = TRUE), n = n()) %>%
-  arrange(desc(ARR_DELAY)) %>%
-  inner_join(location)
+  arrange(desc(ARR_DELAY)) 
+
+final <- inner_join(location, delays, by=c("DEST")) 
+# final %>% View()
 
 
-ggplot(delays, aes(long, lat)) + 
+ggplot(final, aes(long, lat)) + 
   borders("state") + 
   geom_point(aes(colour = ARR_DELAY), size = 5, alpha = 0.9) + 
+  geom_text(aes(label=DEST, hjust=-.2), size=1.9) +
   scale_colour_gradient2() +
+  theme_minimal() +
   coord_quickmap()
 
 delays <- delays %>% filter(ARR_DELAY < 0)
