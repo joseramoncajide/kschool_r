@@ -14,7 +14,9 @@
 
 **Sesión #2:**
 
-1. [Análisis y modelado estadístico](01-Modeling-Google-Adwords-Campaigns)
+1. [Automatización de informes de Google Analytics](07-Reporting)
+
+2. [Análisis y modelado estadístico](01-Modeling-Google-Adwords-Campaigns)
 
 ## Extras
 
