@@ -417,12 +417,6 @@ mutate: Crear nuevas variables
 -   Permite crear variables a partir de variables existentes en nuestro conjunto de datos
 
 ``` r
-# base R: Nueva variable SPEED (en mph)
-flights$SPEED <- flights$DISTANCE / flights$AIR_TIME*60
-flights[, c("DISTANCE", "AIR_TIME", "SPEED")]
-```
-
-``` r
 # dplyr: comprobamos que es correcto
 flights %>% select(DISTANCE, AIR_TIME) %>%
   mutate(SPEED = DISTANCE/AIR_TIME*60)
@@ -471,12 +465,6 @@ summarise: Reducción de variables a valores
 -   Se usa principalmente tras una agrupación de datos
 -   `group_by` crea los grupos sobre los que vamos a trabajar
 -   `summarise` resume cada grupo
-
-``` r
-# base R: retraso medio por destino
-head(with(flights, tapply(ARR_DELAY, DEST, mean, na.rm=TRUE)))
-head(aggregate(ARR_DELAY ~ DEST, flights, mean))
-```
 
 ``` r
 # dplyr:
@@ -559,7 +547,7 @@ flights %>%
 barplot(table(flights$DAY_OF_MONTH))
 ```
 
-![](05-dplyr-flights_files/figure-markdown_github/unnamed-chunk-19-1.png)
+![](05-dplyr-flights_files/figure-markdown_github/unnamed-chunk-17-1.png)
 
 ``` r
 flights %>%
@@ -568,29 +556,7 @@ flights %>%
     arrange(desc(total)) %>% ggplot(aes(x = factor(DAY_OF_MONTH), y = total)) + geom_bar(stat = "identity") 
 ```
 
-![](05-dplyr-flights_files/figure-markdown_github/unnamed-chunk-19-2.png)
-
-``` r
-# más simple
-flights %>%
-    group_by(DAY_OF_MONTH) %>%
-    tally(sort = TRUE)
-```
-
-    ## # A tibble: 31 × 2
-    ##    DAY_OF_MONTH     n
-    ##           <int> <int>
-    ## 1            18 16710
-    ## 2            17 16579
-    ## 3            27 16509
-    ## 4            23 16481
-    ## 5            28 16312
-    ## 6            21 16306
-    ## 7             3 16278
-    ## 8            11 16263
-    ## 9            22 16261
-    ## 10           30 16260
-    ## # ... with 21 more rows
+![](05-dplyr-flights_files/figure-markdown_github/unnamed-chunk-17-2.png)
 
 ``` r
 # número total de vuelos y número de aviones distintos que han volado a cada destino
@@ -614,28 +580,6 @@ flights %>%
     ## 10   ADQ    30      10
     ## # ... with 297 more rows
 
--   Agrupar también es util sin hacer un `summarise`
-
-``` r
-# número total de vuelos cancelados y no cancelados por destino
-flights %>%
-    group_by(DEST) %>%
-    select(CANCELLED) %>%
-    table() %>%
-    head()
-```
-
-    ## Adding missing grouping variables: `DEST`
-
-    ##      CANCELLED
-    ## DEST     0    1
-    ##   ABE  148    5
-    ##   ABI  194   16
-    ##   ABQ 1597   27
-    ##   ABR   61    1
-    ##   ABY   75    0
-    ##   ACT  150    1
-
 Funciones de ventana ("Window")
 -------------------------------
 
@@ -643,22 +587,10 @@ Funciones de ventana ("Window")
 -   Funciones de ranking y orden (como `min_rank`), de balance (`lead` y `lag`), y agregados (como `cummean`).
 
 ``` r
-# Calcular, para cada compañía, que dos días del mes han tenido mayores retrasos en la salida
-# Nota: al valor más pequeño, ranked le asigna un 1, por lo qye habrá que ordenar descendentemente DEP_DELAY para hacer un rank por el valor más grande
+# Calcular, para cada compañía, que dos días del mes que han tenido mayores retrasos en la salida
 flights %>%
     group_by(CARRIER) %>%
     select(DAY_OF_MONTH, DEP_DELAY) %>%
-    filter(min_rank(desc(DEP_DELAY)) <= 2) %>%
-    arrange(CARRIER, desc(DEP_DELAY))
-```
-
-    ## Adding missing grouping variables: `CARRIER`
-
-``` r
-# más simple con `top_n`
-flights %>%
-    group_by(CARRIER) %>%
-    select(MONTH, DAY_OF_MONTH, DEP_DELAY) %>%
     top_n(2) %>%
     arrange(CARRIER, desc(DEP_DELAY))
 ```
@@ -667,21 +599,21 @@ flights %>%
 
     ## Selecting by DEP_DELAY
 
-    ## Source: local data frame [26 x 4]
+    ## Source: local data frame [26 x 3]
     ## Groups: CARRIER [13]
     ## 
-    ##    CARRIER MONTH DAY_OF_MONTH DEP_DELAY
-    ##      <chr> <int>        <int>     <dbl>
-    ## 1       AA    12           31      1649
-    ## 2       AA    12           14      1576
-    ## 3       AS    12           23       803
-    ## 4       AS    12           13       571
-    ## 5       B6    12           28      1006
-    ## 6       B6    12           30       892
-    ## 7       DL    12           20      1228
-    ## 8       DL    12           24      1137
-    ## 9       EV    12           26      1274
-    ## 10      EV    12           26      1236
+    ##    CARRIER DAY_OF_MONTH DEP_DELAY
+    ##      <chr>        <int>     <dbl>
+    ## 1       AA           31      1649
+    ## 2       AA           14      1576
+    ## 3       AS           23       803
+    ## 4       AS           13       571
+    ## 5       B6           28      1006
+    ## 6       B6           30       892
+    ## 7       DL           20      1228
+    ## 8       DL           24      1137
+    ## 9       EV           26      1274
+    ## 10      EV           26      1236
     ## # ... with 16 more rows
 
 ``` r
@@ -737,43 +669,21 @@ Otras funciones útiles
 ----------------------
 
 ``` r
-# muestra aleatoria sin reemplazo
+# muestra aleatoria
 flights %>% sample_n(5)
 ```
 
-    ## # A tibble: 5 × 18
+    ## # A tibble: 5 × 17
     ##    YEAR QUARTER MONTH DAY_OF_MONTH CARRIER TAIL_NUM FL_NUM ORIGIN  DEST
     ##   <int>   <int> <int>        <int>   <chr>    <chr>  <int>  <chr> <chr>
-    ## 1  2015       4    12           19      DL   N935DN   2163    MSP   PDX
-    ## 2  2015       4    12           12      WN   N363SW    707    DTW   ATL
-    ## 3  2015       4    12           30      DL   N587NW   1064    MCO   MSP
-    ## 4  2015       4    12            6      B6   N565JB    481    DCA   RSW
-    ## 5  2015       4    12           18      UA   N802UA    445    DEN   IAH
-    ## # ... with 9 more variables: DEP_TIME <chr>, DEP_DELAY <dbl>,
+    ## 1  2015       4    12           14      EV   N176PQ   5117    BTR   ATL
+    ## 2  2015       4    12            3      B6   N506JB   1006    LGB   SEA
+    ## 3  2015       4    12            3      DL    N3759   1477    ORD   ATL
+    ## 4  2015       4    12           19      WN   N236WN   3192    CMH   DEN
+    ## 5  2015       4    12           13      HA   N484HA    233    OGG   HNL
+    ## # ... with 8 more variables: DEP_TIME <chr>, DEP_DELAY <dbl>,
     ## #   ARR_TIME <chr>, ARR_DELAY <dbl>, CANCELLED <dbl>, DIVERTED <dbl>,
-    ## #   AIR_TIME <dbl>, DISTANCE <dbl>, SPEED <dbl>
-
-``` r
-# muestra aleatoria con reemplazo
-flights %>% sample_frac(0.25, replace=TRUE)
-```
-
-    ## # A tibble: 119,808 × 18
-    ##     YEAR QUARTER MONTH DAY_OF_MONTH CARRIER TAIL_NUM FL_NUM ORIGIN  DEST
-    ##    <int>   <int> <int>        <int>   <chr>    <chr>  <int>  <chr> <chr>
-    ## 1   2015       4    12           21      AS   N408AS     18    SEA   JFK
-    ## 2   2015       4    12           23      EV   N14148   4451    IAH   ECP
-    ## 3   2015       4    12           23      OO   N772SK   5601    PHX   SFO
-    ## 4   2015       4    12           27      AA   N793AA      9    JFK   SFO
-    ## 5   2015       4    12           23      AA   N812AW   1692    ORD   CLT
-    ## 6   2015       4    12           31      WN   N391SW    482    DAY   MCO
-    ## 7   2015       4    12           16      UA   N405UA    622    LGA   ORD
-    ## 8   2015       4    12           27      UA   N815UA    377    BIL   DEN
-    ## 9   2015       4    12            3      B6   N283JB   1215    BOS   BUF
-    ## 10  2015       4    12            5      EV   N166PQ   5256    CID   ATL
-    ## # ... with 119,798 more rows, and 9 more variables: DEP_TIME <chr>,
-    ## #   DEP_DELAY <dbl>, ARR_TIME <chr>, ARR_DELAY <dbl>, CANCELLED <dbl>,
-    ## #   DIVERTED <dbl>, AIR_TIME <dbl>, DISTANCE <dbl>, SPEED <dbl>
+    ## #   AIR_TIME <dbl>, DISTANCE <dbl>
 
 Joins
 -----
@@ -843,21 +753,22 @@ location
 delays <- flights %>%
   group_by(DEST) %>%
   summarise(ARR_DELAY = mean(ARR_DELAY, na.rm = TRUE), n = n()) %>%
-  arrange(desc(ARR_DELAY)) %>%
-  inner_join(location)
-```
+  arrange(desc(ARR_DELAY)) 
 
-    ## Joining, by = "DEST"
+final <- inner_join(location, delays, by=c("DEST")) 
+# final %>% View()
 
-``` r
-ggplot(delays, aes(long, lat)) + 
+
+ggplot(final, aes(long, lat)) + 
   borders("state") + 
   geom_point(aes(colour = ARR_DELAY), size = 5, alpha = 0.9) + 
+  geom_text(aes(label=DEST, hjust=-.2), size=1.9) +
   scale_colour_gradient2() +
+  theme_minimal() +
   coord_quickmap()
 ```
 
-![](05-dplyr-flights_files/figure-markdown_github/unnamed-chunk-24-1.png)
+![](05-dplyr-flights_files/figure-markdown_github/unnamed-chunk-20-1.png)
 
 ``` r
 delays <- delays %>% filter(ARR_DELAY < 0)

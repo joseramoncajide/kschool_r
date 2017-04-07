@@ -1,7 +1,7 @@
 ---
 title: "Manipulación de datos en R con dplyr"
 author: '@jrcajide'
-output: pdf_document
+output: github_document
 ---
 
 ```{r}
