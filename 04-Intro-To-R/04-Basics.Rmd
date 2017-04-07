@@ -20,7 +20,6 @@ TRUE
 
 * class()  ¿De qué tipo es?
 * length()  ¿Qué longitud tiene?
-* attributes()  ¿Contiene metadatos?
 
 **Ejemplo:**
 ```{r}
@@ -150,11 +149,6 @@ min(tallas) ## Ahora sí
 table(tallas)
 ```
 
-**Podemos convertir una variable categórica en texto:**
-```{r}
-as.character(tallas)
-```
-
 ### Dataframes
 ```{r}
 df <- data.frame(id = letters[1:10], x = 1:10, y = rnorm(10))
@@ -207,27 +201,6 @@ x[c(TRUE, TRUE, FALSE, FALSE)]
 x[x > 6]
 ```
 
-
-### Sobre listas
-
-**Usando enteros**
-```{r}
-x <- as.list(1:12)
-x[1:5]
-x[[5]]
-```
-
-
-### De matrices
-
-```{r}
-a <- matrix(1:9, nrow = 3)
-colnames(a) <- c("A", "B", "C")
-a
-a[1:2, ]
-a[c(T, F, T), c("B", "A")]
-a[0, -2]
-```
 
 ### De data frames
 
