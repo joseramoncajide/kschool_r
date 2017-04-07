@@ -744,11 +744,11 @@ flights %>% sample_n(5)
     ## # A tibble: 5 × 18
     ##    YEAR QUARTER MONTH DAY_OF_MONTH CARRIER TAIL_NUM FL_NUM ORIGIN  DEST
     ##   <int>   <int> <int>        <int>   <chr>    <chr>  <int>  <chr> <chr>
-    ## 1  2015       4    12           29      AA   N3KLAA   1439    BNA   DFW
-    ## 2  2015       4    12           21      DL   N813DN   1554    LAX   ATL
-    ## 3  2015       4    12           21      WN   N214WN    264    ATL   JAX
-    ## 4  2015       4    12           27      DL   N977AT   1398    ATL   MHT
-    ## 5  2015       4    12           10      AA   N114UW   1769    CLT   MCI
+    ## 1  2015       4    12           19      DL   N935DN   2163    MSP   PDX
+    ## 2  2015       4    12           12      WN   N363SW    707    DTW   ATL
+    ## 3  2015       4    12           30      DL   N587NW   1064    MCO   MSP
+    ## 4  2015       4    12            6      B6   N565JB    481    DCA   RSW
+    ## 5  2015       4    12           18      UA   N802UA    445    DEN   IAH
     ## # ... with 9 more variables: DEP_TIME <chr>, DEP_DELAY <dbl>,
     ## #   ARR_TIME <chr>, ARR_DELAY <dbl>, CANCELLED <dbl>, DIVERTED <dbl>,
     ## #   AIR_TIME <dbl>, DISTANCE <dbl>, SPEED <dbl>
@@ -761,16 +761,16 @@ flights %>% sample_frac(0.25, replace=TRUE)
     ## # A tibble: 119,808 × 18
     ##     YEAR QUARTER MONTH DAY_OF_MONTH CARRIER TAIL_NUM FL_NUM ORIGIN  DEST
     ##    <int>   <int> <int>        <int>   <chr>    <chr>  <int>  <chr> <chr>
-    ## 1   2015       4    12           26      AA   N956UW   2145    LGA   DCA
-    ## 2   2015       4    12           24      EV   N754EV   5198    OKC   MSP
-    ## 3   2015       4    12            8      DL   N941DL    423    JFK   ATL
-    ## 4   2015       4    12           11      DL   N538US   1735    LIH   LAX
-    ## 5   2015       4    12           10      OO   N453SW   4539    TUS   SLC
-    ## 6   2015       4    12           26      WN   N239WN   3439    ATL   DCA
-    ## 7   2015       4    12           24      AA   N3CDAA     93    ORD   LAS
-    ## 8   2015       4    12           11      OO   N943SW   5478    DEN   LAR
-    ## 9   2015       4    12           13      WN   N560WN    659    BUR   SJC
-    ## 10  2015       4    12           23      EV   N13566   4399    MAF   IAH
+    ## 1   2015       4    12           21      AS   N408AS     18    SEA   JFK
+    ## 2   2015       4    12           23      EV   N14148   4451    IAH   ECP
+    ## 3   2015       4    12           23      OO   N772SK   5601    PHX   SFO
+    ## 4   2015       4    12           27      AA   N793AA      9    JFK   SFO
+    ## 5   2015       4    12           23      AA   N812AW   1692    ORD   CLT
+    ## 6   2015       4    12           31      WN   N391SW    482    DAY   MCO
+    ## 7   2015       4    12           16      UA   N405UA    622    LGA   ORD
+    ## 8   2015       4    12           27      UA   N815UA    377    BIL   DEN
+    ## 9   2015       4    12            3      B6   N283JB   1215    BOS   BUF
+    ## 10  2015       4    12            5      EV   N166PQ   5256    CID   ATL
     ## # ... with 119,798 more rows, and 9 more variables: DEP_TIME <chr>,
     ## #   DEP_DELAY <dbl>, ARR_TIME <chr>, ARR_DELAY <dbl>, CANCELLED <dbl>,
     ## #   DIVERTED <dbl>, AIR_TIME <dbl>, DISTANCE <dbl>, SPEED <dbl>

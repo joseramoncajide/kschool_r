@@ -6,31 +6,29 @@ Tipos de datos básicos en R
 ---------------------------
 
 ``` r
+# Esto es un comentario
 "a"
 2
 TRUE
 ```
 
-### Algunos funciones importantes
+### Funciones
 
--   class() ¿De qué tipo es?
+-   c()
 -   length() ¿Qué longitud tiene?
--   attributes() ¿Contiene metadatos?
+-   class() ¿De qué tipo es?
+-   paste()
+-   seq()
+-   sum()
 
 **Ejemplo:**
 
 ``` r
-x <- "Hola!"
+x <- "hola!"
 class(x)
 ```
 
     ## [1] "character"
-
-``` r
-attributes(x)
-```
-
-    ## NULL
 
 ``` r
 y <- 1:10
@@ -46,112 +44,166 @@ length(y)
     ## [1] 10
 
 ``` r
-attributes(y)
-```
-
-    ## NULL
-
-``` r
 z <- c(1, 2, 3)
 class(z)
 ```
 
     ## [1] "numeric"
 
+**Cargando nuevas funciones**
+
+``` r
+# install.packages("stringr")
+library(stringr)
+```
+
+    ## Warning: package 'stringr' was built under R version 3.3.2
+
+``` r
+str_length(x)
+```
+
+    ## [1] 5
+
+``` r
+str_to_upper(x)
+```
+
+    ## [1] "HOLA!"
+
+``` r
+str_to_title(x)
+```
+
+    ## [1] "Hola!"
+
+**Creando nuestras funciones**
+
+``` r
+suma <- function(a, b) {
+  
+  respuesta <- a + b
+
+  return (respuesta)
+}
+
+suma(3, 6)
+```
+
+    ## [1] 9
+
+``` r
+# Afortunadamente :)
+
+sum(3,6)
+```
+
+    ## [1] 9
+
 Estructuras de datos
 --------------------
 
-### Vectores
+#### Vectores
 
 ``` r
-x <- vector()
-x
+dispositivos <- c('Mobile', 'Tablet')
+print(dispositivos) 
 ```
 
-    ## logical(0)
-
-#### Creación de vectores
+    ## [1] "Mobile" "Tablet"
 
 ``` r
-x <- c(1, 2, 3)
-x
+mas.dispositivos <- c(dispositivos, 'Desktop')
+print(mas.dispositivos)
 ```
 
-    ## [1] 1 2 3
+    ## [1] "Mobile"  "Tablet"  "Desktop"
 
 ``` r
-length(x)
+# Indexing
+dispositivo_tablet <- dispositivos[2]
+print(dispositivo_tablet)
 ```
 
-    ## [1] 3
+    ## [1] "Tablet"
 
 ``` r
-x1 <- c(1, 2, 3)
-y <- c(TRUE, TRUE, FALSE, FALSE)
-z <- c("Oro", "Plata", "Bronce", "Cobre")
-class(z)
+dispositivos <- c('Mobile', 'Tablet', 'Desktop')
+todos.menos.tablet <- dispositivos[-2]  
+dispositivos[c(2, 3)]
 ```
 
-    ## [1] "character"
+    ## [1] "Tablet"  "Desktop"
 
 ``` r
-z <- c(z, "Platino")
-z
+indices <- c(2, 3)
+dispositivos[indices]
 ```
 
-    ## [1] "Oro"     "Plata"   "Bronce"  "Cobre"   "Platino"
+    ## [1] "Tablet"  "Desktop"
 
 ``` r
-x <- c(0.5, 0.7)
-x <- c(TRUE, FALSE)
-x <- c("a", "b", "c", "d", "e")
-x <- 9:100
-
-# usando secuencias
-
-series <- 1:10
-seq(10)
+navegadores <- c('Chrome', 'Safari', 'Explorer', 'Firefox', 'Lynx', 'Opera')
+navegadores[2:5]
 ```
 
-    ##  [1]  1  2  3  4  5  6  7  8  9 10
+    ## [1] "Safari"   "Explorer" "Firefox"  "Lynx"
 
 ``` r
-seq(1, 10, by = 0.1)
+tamano.pantallas <- c(7, 6.5, 4, 11, 8)
+tamano.pantallas[c(TRUE, FALSE, FALSE, TRUE, TRUE)]
 ```
 
-    ##  [1]  1.0  1.1  1.2  1.3  1.4  1.5  1.6  1.7  1.8  1.9  2.0  2.1  2.2  2.3
-    ## [15]  2.4  2.5  2.6  2.7  2.8  2.9  3.0  3.1  3.2  3.3  3.4  3.5  3.6  3.7
-    ## [29]  3.8  3.9  4.0  4.1  4.2  4.3  4.4  4.5  4.6  4.7  4.8  4.9  5.0  5.1
-    ## [43]  5.2  5.3  5.4  5.5  5.6  5.7  5.8  5.9  6.0  6.1  6.2  6.3  6.4  6.5
-    ## [57]  6.6  6.7  6.8  6.9  7.0  7.1  7.2  7.3  7.4  7.5  7.6  7.7  7.8  7.9
-    ## [71]  8.0  8.1  8.2  8.3  8.4  8.5  8.6  8.7  8.8  8.9  9.0  9.1  9.2  9.3
-    ## [85]  9.4  9.5  9.6  9.7  9.8  9.9 10.0
+    ## [1]  7 11  8
 
 ``` r
-length(1:10)
+pantalla.es.grande <- tamano.pantallas > 6.5
+pantallas.grandes <- tamano.pantallas[ pantalla.es.grande ] 
+
+tamano.pantallas[tamano.pantallas > 6.5] 
 ```
 
-    ## [1] 10
+    ## [1]  7 11  8
 
 ``` r
-# ¿Qué ocurre si mezclamos tipos de datos?
-# coercion
-(xx <- c(1.7, "a"))
+# Modificando un vector
+medios <- c('', 'Buscadores', 'Mail')
+medios[3] <- 'Email'
+medios[c(1,2)] <- c('Directo', 'Organic')
+
+# Operaciones vectorizadas
+
+v1 <- c(1, 1, 1, 1, 1)
+v2 <- c(1, 2, 3, 4, 5)
+
+v1 + v2  
 ```
 
-    ## [1] "1.7" "a"
+    ## [1] 2 3 4 5 6
 
 ``` r
-(xx <- c(TRUE, 2))
+v1 - v2  
 ```
 
-    ## [1] 1 2
+    ## [1]  0 -1 -2 -3 -4
 
 ``` r
-(xx <- c("a", TRUE))
+v1 * v2  
 ```
 
-    ## [1] "a"    "TRUE"
+    ## [1] 1 2 3 4 5
+
+``` r
+v1 / v2
+```
+
+    ## [1] 1.0000000 0.5000000 0.3333333 0.2500000 0.2000000
+
+``` r
+v3 <- v1 + v1 
+
+v4 <- (v1 + v2) / v3
+```
 
 ### Matrices
 
@@ -182,16 +234,6 @@ m
 
 ``` r
 # Otras formas de construir matrices
-m <- 1:10
-dim(m) <- c(2, 5)
-m
-```
-
-    ##      [,1] [,2] [,3] [,4] [,5]
-    ## [1,]    1    3    5    7    9
-    ## [2,]    2    4    6    8   10
-
-``` r
 x <- 1:3
 y <- 10:12
 (cbind(x, y))
@@ -211,18 +253,6 @@ y <- 10:12
     ## x    1    2    3
     ## y   10   11   12
 
-``` r
-# byrow nos permite especificar como rellanar la matriz
-mdat <- matrix(c(1,2,3, 11,12,13), nrow = 2, ncol = 3, byrow = TRUE,
-               dimnames = list(c("row1", "row2"),
-                               c("C.1", "C.2", "C.3")))
-mdat
-```
-
-    ##      C.1 C.2 C.3
-    ## row1   1   2   3
-    ## row2  11  12  13
-
 ### Listas
 
 ``` r
@@ -239,50 +269,6 @@ x
     ## 
     ## [[3]]
     ## [1] TRUE
-
-``` r
-# Podemos transformar otros objetos a lista con as.list()
-
-x <- 1:10
-x <- as.list(x)
-x
-```
-
-    ## [[1]]
-    ## [1] 1
-    ## 
-    ## [[2]]
-    ## [1] 2
-    ## 
-    ## [[3]]
-    ## [1] 3
-    ## 
-    ## [[4]]
-    ## [1] 4
-    ## 
-    ## [[5]]
-    ## [1] 5
-    ## 
-    ## [[6]]
-    ## [1] 6
-    ## 
-    ## [[7]]
-    ## [1] 7
-    ## 
-    ## [[8]]
-    ## [1] 8
-    ## 
-    ## [[9]]
-    ## [1] 9
-    ## 
-    ## [[10]]
-    ## [1] 10
-
-``` r
-length(x)
-```
-
-    ## [1] 10
 
 **Ejemplo:**
 
@@ -328,19 +314,18 @@ nlevels(sexo)
     ## [1] 2
 
 ``` r
+length(levels(sexo))
+```
+
+    ## [1] 2
+
+``` r
 # Orden de los factores
 tallas <- factor(c("s", "xl", "m", "xl", "s", "m", "xl"))
 levels(tallas)
 ```
 
     ## [1] "m"  "s"  "xl"
-
-``` r
-tallas <- factor(tallas, levels=c("s", "m", "xl"))
-levels(tallas)
-```
-
-    ## [1] "s"  "m"  "xl"
 
 **¿Podemos saber cuál es la talla más pequeña?**
 
@@ -372,14 +357,6 @@ table(tallas)
     ##  s  m xl 
     ##  2  2  3
 
-**Podemos convertir una variable categórica en texto:**
-
-``` r
-as.character(tallas)
-```
-
-    ## [1] "s"  "xl" "m"  "xl" "s"  "m"  "xl"
-
 ### Dataframes
 
 ``` r
@@ -387,34 +364,34 @@ df <- data.frame(id = letters[1:10], x = 1:10, y = rnorm(10))
 df
 ```
 
-    ##    id  x          y
-    ## 1   a  1  0.4845411
-    ## 2   b  2  0.9504657
-    ## 3   c  3  1.2096347
-    ## 4   d  4  1.5591655
-    ## 5   e  5  0.3186032
-    ## 6   f  6 -0.2962901
-    ## 7   g  7 -0.2319464
-    ## 8   h  8  0.1176230
-    ## 9   i  9  0.1318751
-    ## 10  j 10  0.1728070
+    ##    id  x           y
+    ## 1   a  1  1.52440667
+    ## 2   b  2 -0.93409308
+    ## 3   c  3  1.87509944
+    ## 4   d  4  0.03558504
+    ## 5   e  5  0.24471947
+    ## 6   f  6 -0.60568154
+    ## 7   g  7 -1.19267434
+    ## 8   h  8 -0.12182857
+    ## 9   i  9 -1.15942674
+    ## 10  j 10 -0.22898682
 
 ``` r
 # agregar nuevas variables
 cbind(df, data.frame(z = 4))
 ```
 
-    ##    id  x          y z
-    ## 1   a  1  0.4845411 4
-    ## 2   b  2  0.9504657 4
-    ## 3   c  3  1.2096347 4
-    ## 4   d  4  1.5591655 4
-    ## 5   e  5  0.3186032 4
-    ## 6   f  6 -0.2962901 4
-    ## 7   g  7 -0.2319464 4
-    ## 8   h  8  0.1176230 4
-    ## 9   i  9  0.1318751 4
-    ## 10  j 10  0.1728070 4
+    ##    id  x           y z
+    ## 1   a  1  1.52440667 4
+    ## 2   b  2 -0.93409308 4
+    ## 3   c  3  1.87509944 4
+    ## 4   d  4  0.03558504 4
+    ## 5   e  5  0.24471947 4
+    ## 6   f  6 -0.60568154 4
+    ## 7   g  7 -1.19267434 4
+    ## 8   h  8 -0.12182857 4
+    ## 9   i  9 -1.15942674 4
+    ## 10  j 10 -0.22898682 4
 
 **Funciones útiles:**
 
@@ -428,307 +405,7 @@ str()
 names()
 ```
 
-**Ejemplos:**
-
-``` r
-# Names: se aplican a vectores
-x <- 1:3
-names(x) <- c("a", "b", "c")
-x
-```
-
-    ## a b c 
-    ## 1 2 3
-
-``` r
-# a listas
-x <- as.list(1:4)
-names(x) <- letters[seq(along = x)]
-x
-```
-
-    ## $a
-    ## [1] 1
-    ## 
-    ## $b
-    ## [1] 2
-    ## 
-    ## $c
-    ## [1] 3
-    ## 
-    ## $d
-    ## [1] 4
-
-``` r
-# a matrices con dimnames
-m <- matrix(1:4, nrow = 2)
-dimnames(m) <- list(c("a", "b"), c("c", "d")) # (filas, columnas)
-m
-```
-
-    ##   c d
-    ## a 1 3
-    ## b 2 4
-
-``` r
-dimnames(m)
-```
-
-    ## [[1]]
-    ## [1] "a" "b"
-    ## 
-    ## [[2]]
-    ## [1] "c" "d"
-
-``` r
-colnames(m)
-```
-
-    ## [1] "c" "d"
-
-``` r
-rownames(m)
-```
-
-    ## [1] "a" "b"
-
-### Missing values
-
-``` r
-x <- c(1, 2, NA, 4, 5)
-x
-```
-
-    ## [1]  1  2 NA  4  5
-
-``` r
-is.na(x) 
-```
-
-    ## [1] FALSE FALSE  TRUE FALSE FALSE
-
-Subset
-------
-
-### Sobre vectores
-
-**Usando enteros positivos**
-
-``` r
-x <- c(5.4, 6.2, 7.1, 4.8)
-x[1]
-```
-
-    ## [1] 5.4
-
-``` r
-x[c(3, 1)]
-```
-
-    ## [1] 7.1 5.4
-
-``` r
-x[1:3]
-```
-
-    ## [1] 5.4 6.2 7.1
-
-``` r
-x[c(1, 1)]
-```
-
-    ## [1] 5.4 5.4
-
-**Usando enteros negativos**
-
-``` r
-x[-1]
-```
-
-    ## [1] 6.2 7.1 4.8
-
-``` r
-x[-c(1, 5)]
-```
-
-    ## [1] 6.2 7.1 4.8
-
-**Usando valores lógicos**
-
-``` r
-x[c(TRUE, TRUE, FALSE, FALSE)]
-```
-
-    ## [1] 5.4 6.2
-
-``` r
-x[x > 6]
-```
-
-    ## [1] 6.2 7.1
-
-``` r
-x[which(x > 6)]
-```
-
-    ## [1] 6.2 7.1
-
-``` r
-x[which.max(x)]
-```
-
-    ## [1] 7.1
-
-``` r
-x[which.min(x)]
-```
-
-    ## [1] 4.8
-
-**Referenciando objetos por sus nombres**
-
-``` r
-(y <- setNames(x, letters[1:4]))
-```
-
-    ##   a   b   c   d 
-    ## 5.4 6.2 7.1 4.8
-
-``` r
-y[c("d", "c", "a")]
-```
-
-    ##   d   c   a 
-    ## 4.8 7.1 5.4
-
-``` r
-y[c("a", "a", "a")]
-```
-
-    ##   a   a   a 
-    ## 5.4 5.4 5.4
-
-### Sobre listas
-
-**Usando enteros**
-
-``` r
-x <- as.list(1:12)
-x[1:5]
-```
-
-    ## [[1]]
-    ## [1] 1
-    ## 
-    ## [[2]]
-    ## [1] 2
-    ## 
-    ## [[3]]
-    ## [1] 3
-    ## 
-    ## [[4]]
-    ## [1] 4
-    ## 
-    ## [[5]]
-    ## [1] 5
-
-``` r
-x[[5]]
-```
-
-    ## [1] 5
-
-``` r
-class(x[[5]])
-```
-
-    ## [1] "integer"
-
-**Por su nombre**
-
-``` r
-names(x) <- month.name[1:length(x)] # Les damos un nombre
-x
-```
-
-    ## $January
-    ## [1] 1
-    ## 
-    ## $February
-    ## [1] 2
-    ## 
-    ## $March
-    ## [1] 3
-    ## 
-    ## $April
-    ## [1] 4
-    ## 
-    ## $May
-    ## [1] 5
-    ## 
-    ## $June
-    ## [1] 6
-    ## 
-    ## $July
-    ## [1] 7
-    ## 
-    ## $August
-    ## [1] 8
-    ## 
-    ## $September
-    ## [1] 9
-    ## 
-    ## $October
-    ## [1] 10
-    ## 
-    ## $November
-    ## [1] 11
-    ## 
-    ## $December
-    ## [1] 12
-
-``` r
-x[["March"]]
-```
-
-    ## [1] 3
-
-### De matrices
-
-``` r
-a <- matrix(1:9, nrow = 3)
-colnames(a) <- c("A", "B", "C")
-a
-```
-
-    ##      A B C
-    ## [1,] 1 4 7
-    ## [2,] 2 5 8
-    ## [3,] 3 6 9
-
-``` r
-a[1:2, ]
-```
-
-    ##      A B C
-    ## [1,] 1 4 7
-    ## [2,] 2 5 8
-
-``` r
-a[c(T, F, T), c("B", "A")]
-```
-
-    ##      B A
-    ## [1,] 4 1
-    ## [2,] 6 3
-
-``` r
-a[0, -2]
-```
-
-    ##      A C
-
-### De data frames
+**Subset**
 
 ``` r
 df <-
@@ -742,60 +419,49 @@ str(df)
 
     ## 'data.frame':    12 obs. of  3 variables:
     ##  $ month        : Factor w/ 12 levels "April","August",..: 5 4 8 1 9 7 6 2 12 11 ...
-    ##  $ sesiones     : num  405 409 403 405 404 ...
-    ##  $ transacciones: num  23.9 13.1 24.7 14.7 22.4 ...
+    ##  $ sesiones     : num  404 381 389 398 387 ...
+    ##  $ transacciones: num  20.9 20.2 18.6 20.9 24.3 ...
 
 ``` r
 df[df$sesiones < 400, ]
 ```
 
-    ##      month sesiones transacciones
-    ## 7     July   395.23         18.64
-    ## 8   August   397.93         14.32
-    ## 10 October   392.38         18.60
+    ##        month sesiones transacciones
+    ## 2   February   381.39         20.21
+    ## 3      March   388.83         18.56
+    ## 4      April   398.00         20.90
+    ## 5        May   387.22         24.30
+    ## 6       June   393.03         15.63
+    ## 8     August   399.40         27.22
+    ## 9  September   399.11         24.02
+    ## 10   October   390.16         15.99
 
 ``` r
 df[c(1, 3), ]
 ```
 
     ##     month sesiones transacciones
-    ## 1 January   404.64         23.91
-    ## 3   March   402.99         24.66
+    ## 1 January   404.28         20.88
+    ## 3   March   388.83         18.56
 
 ``` r
-# Como en las listas
-df[c("month", "transacciones")]
-```
-
-    ##        month transacciones
-    ## 1    January         23.91
-    ## 2   February         13.13
-    ## 3      March         24.66
-    ## 4      April         14.70
-    ## 5        May         22.38
-    ## 6       June         21.73
-    ## 7       July         18.64
-    ## 8     August         14.32
-    ## 9  September         21.51
-    ## 10   October         18.60
-    ## 11  November         20.23
-    ## 12  December         18.94
-
-``` r
-# Como en las matrices
 df[, c("month", "transacciones")]
 ```
 
     ##        month transacciones
-    ## 1    January         23.91
-    ## 2   February         13.13
-    ## 3      March         24.66
-    ## 4      April         14.70
-    ## 5        May         22.38
-    ## 6       June         21.73
-    ## 7       July         18.64
-    ## 8     August         14.32
-    ## 9  September         21.51
-    ## 10   October         18.60
-    ## 11  November         20.23
-    ## 12  December         18.94
+    ## 1    January         20.88
+    ## 2   February         20.21
+    ## 3      March         18.56
+    ## 4      April         20.90
+    ## 5        May         24.30
+    ## 6       June         15.63
+    ## 7       July         20.17
+    ## 8     August         27.22
+    ## 9  September         24.02
+    ## 10   October         15.99
+    ## 11  November         23.64
+    ## 12  December         15.99
+
+``` r
+# df[c("month", "transacciones")]
+```

@@ -11,19 +11,25 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Tipos de datos básicos en R
 
 ```{r eval=FALSE}
+# Esto es un comentario
 "a"
 2
 TRUE
 ```
 
-### Algunos funciones importantes
+### Funciones
 
-* class()  ¿De qué tipo es?
+* c()
 * length()  ¿Qué longitud tiene?
+* class()  ¿De qué tipo es?
+* paste()
+* seq()
+* sum()
+
 
 **Ejemplo:**
 ```{r}
-x <- "Hola!"
+x <- "hola!"
 class(x)
 
 y <- 1:10
@@ -33,42 +39,90 @@ length(y)
 z <- c(1, 2, 3)
 class(z)
 
+
 ```
+
+**Cargando nuevas funciones**
+
+```{r}
+# install.packages("stringr")
+library(stringr)
+str_length(x)
+str_to_upper(x)
+str_to_title(x)
+```
+
+
+**Creando nuestras funciones**
+
+```{r}
+suma <- function(a, b) {
+  
+  respuesta <- a + b
+
+  return (respuesta)
+}
+
+suma(3, 6)
+
+# Afortunadamente :)
+
+sum(3,6)
+```
+
 
 ## Estructuras de datos
 
 #### Vectores
 
 ```{r}
-x <- c(1, 2, 3)
-x
-length(x)
-x1 <- c(1, 2, 3)
-y <- c(TRUE, TRUE, FALSE, FALSE)
-z <- c("Oro", "Plata", "Bronce", "Cobre")
-class(z)
 
-z <- c(z, "Platino")
-z
+dispositivos <- c('Mobile', 'Tablet')
+print(dispositivos) 
+mas.dispositivos <- c(dispositivos, 'Desktop')
+print(mas.dispositivos)
 
-x <- c(0.5, 0.7)
-x <- c(TRUE, FALSE)
-x <- c("a", "b", "c", "d", "e")
-x <- 9:100
+# Indexing
+dispositivo_tablet <- dispositivos[2]
+print(dispositivo_tablet)
 
-# usando secuencias
+dispositivos <- c('Mobile', 'Tablet', 'Desktop')
+todos.menos.tablet <- dispositivos[-2]  
+dispositivos[c(2, 3)]
 
-1:10
-seq(10)
-seq(1, 10, by = 0.1)
+indices <- c(2, 3)
+dispositivos[indices]
 
-length(1:10)
+navegadores <- c('Chrome', 'Safari', 'Explorer', 'Firefox', 'Lynx', 'Opera')
+navegadores[2:5]
 
-# ¿Qué ocurre si mezclamos tipos de datos?
-# coercion
-(xx <- c(1.7, "a"))
-(xx <- c(TRUE, 2))
-(xx <- c("a", TRUE))
+
+tamano.pantallas <- c(7, 6.5, 4, 11, 8)
+tamano.pantallas[c(TRUE, FALSE, FALSE, TRUE, TRUE)]
+
+pantalla.es.grande <- tamano.pantallas > 6.5
+pantallas.grandes <- tamano.pantallas[ pantalla.es.grande ] 
+
+tamano.pantallas[tamano.pantallas > 6.5] 
+
+# Modificando un vector
+medios <- c('', 'Buscadores', 'Mail')
+medios[3] <- 'Email'
+medios[c(1,2)] <- c('Directo', 'Organic')
+
+# Operaciones vectorizadas
+
+v1 <- c(1, 1, 1, 1, 1)
+v2 <- c(1, 2, 3, 4, 5)
+
+v1 + v2  
+v1 - v2  
+v1 * v2  
+v1 / v2
+
+v3 <- v1 + v1 
+
+v4 <- (v1 + v2) / v3
 
 
 ```
@@ -97,17 +151,9 @@ y <- 10:12
 ### Listas
 
 ```{r}
-
 # Se crean con list()
 x <- list(1, "a", TRUE)
 x
-
-# Podemos transformar otros objetos a lista con as.list()
-
-x <- 1:10
-x <- as.list(x)
-x
-length(x)
 ```
 
 **Ejemplo:**
@@ -129,7 +175,6 @@ length(levels(sexo))
 tallas <- factor(c("s", "xl", "m", "xl", "s", "m", "xl"))
 levels(tallas)
 
-
 ```
 **¿Podemos saber cuál es la talla más pequeña?**
 ```{r eval=FALSE}
@@ -137,7 +182,6 @@ min(tallas)
 ```
 
 ```{r}
-
 tallas <- factor(tallas, levels=c("s", "m", "xl"), ordered = TRUE)
 levels(tallas)
 min(tallas) ## Ahora sí
@@ -168,41 +212,8 @@ str()
 names()
 ```
 
-### Missing values
-```{r}
-x <- c(1, 2, NA, 4, 5)
-x
-is.na(x) 
 
-```
-
-## Subset
-
-### Sobre vectores
-
-**Usando enteros positivos**
-```{r}
-x <- c(5.4, 6.2, 7.1, 4.8)
-x[1]
-x[c(3, 1)]
-x[1:3]
-x[c(1, 1)]
-```
-
-**Usando enteros negativos**
-```{r}
-x[-1]
-x[-c(1, 5)]
-```
-
-**Usando valores lógicos**
-```{r}
-x[c(TRUE, TRUE, FALSE, FALSE)]
-x[x > 6]
-```
-
-
-### De data frames
+**Subset**
 
 ```{r}
 df <-
