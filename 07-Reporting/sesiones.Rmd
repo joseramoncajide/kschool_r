@@ -40,7 +40,7 @@ sesiones.df <- google_analytics(id = "46728973",
 
 ```{r, include=FALSE}
 # Convertimos los datos a una serie temporal
-sesiones.ts <- ts(sesiones.df$sessions, start = c(2014,01), end = c(2017,03), frequency = 12)
+sesiones.ts <- ts(sesiones.df$sessions, start = c(2014,01), end = c(2017,08), frequency = 12)
 plot(sesiones.ts)
 ```
 
@@ -98,7 +98,7 @@ highchart() %>%
 ```
 
 
-```{r}
+```{r, eval=FALSE, include=FALSE}
 # Exportamos los datos a Excel
 workbook <- file.path("sesiones.xlsx")
 wb <- createWorkbook()
