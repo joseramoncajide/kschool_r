@@ -1,7 +1,4 @@
-## ----setup, include=FALSE------------------------------------------------
-knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning=FALSE)
-
-## ---- message=FALSE, warning=FALSE, include=FALSE------------------------
+setwd("~/Documents/GitHub/kschool_r/07-Reporting")
 
 # Clave de acceso a Google Analytics
 Sys.setenv(GA_AUTH_FILE = "ks-alumnos-ga.json")
@@ -30,7 +27,7 @@ sesiones.df <- google_analytics(id = "46728973",
 
 ## ---- include=FALSE------------------------------------------------------
 # Convertimos los datos a una serie temporal
-sesiones.ts <- ts(sesiones.df$sessions, start = c(2014,01), end = c(2017,03), frequency = 12)
+sesiones.ts <- ts(sesiones.df$sessions, start = c(2014,01), end = c(2017,08), frequency = 12)
 plot(sesiones.ts)
 
 ## ------------------------------------------------------------------------
@@ -54,7 +51,9 @@ autoplot(sesiones.modelo) +
 
 ## ---- include=FALSE------------------------------------------------------
 # Realizamos una predicción
-sesiones.prediccion <- forecast( sesiones.modelo, h=6 )
+# 
+meses <- 24
+sesiones.prediccion <- forecast( sesiones.modelo, h=meses )
 plot(sesiones.prediccion)
 
 ## ------------------------------------------------------------------------
@@ -67,15 +66,15 @@ autoplot(sesiones.prediccion) +
 ## ---- eval=FALSE, include=FALSE------------------------------------------
 ## # Bonus
 ## # http://jkunst.com/highcharter/index.html
-## hchart(sesiones.prediccion) %>% hc_title(text = "Sesiones históricas y previstas")
+hchart(sesiones.prediccion) %>% hc_title(text = "Sesiones históricas y previstas")
 
 ## ---- eval=FALSE, include=FALSE------------------------------------------
 ## # Bonus
-## highchart() %>%
-##   hc_add_series_ts(as.ts(sesiones.prediccion)$x, name = "Real") %>%
-##   hc_add_series_ts(as.ts(sesiones.prediccion)$fitted, name = "Modelo") %>%
-##   hc_add_series_ts(as.ts(sesiones.prediccion)$mean, name = "Previsión")  %>%
-##   hc_title(text = "Sesiones históricas y previstas")
+highchart() %>%
+   hc_add_series_ts(as.ts(sesiones.prediccion)$x, name = "Real") %>%
+  hc_add_series_ts(as.ts(sesiones.prediccion)$fitted, name = "Modelo") %>%
+   hc_add_series_ts(as.ts(sesiones.prediccion)$mean, name = "Previsión")  %>%
+   hc_title(text = "Sesiones históricas y previstas")
 
 ## ------------------------------------------------------------------------
 # Exportamos los datos a Excel
