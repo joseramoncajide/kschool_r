@@ -31,3 +31,8 @@
 
 ![](figures/git3.png)
 
+## Objetivo final
+
+Crear un dashboard predictivo automatizado
+
+![](figures/dashboard.png)
