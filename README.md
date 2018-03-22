@@ -35,4 +35,4 @@
 
 Crear un dashboard predictivo automatizado
 
-![](figures/dashboard.png)
+![](figures/r_dashboard.png)
