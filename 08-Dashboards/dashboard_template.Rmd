@@ -1,0 +1,50 @@
+---
+title: "Dashboard capatación de Leads"
+author: "@jrcajde"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+Sys.setenv(GA_AUTH_FILE = 'ga_auth_token.httr-oauth')
+library(googleAnalyticsR)
+library(tidyverse)
+library(highcharter)
+library(forecast)
+library(flexdashboard)
+```
+
+
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Leads
+
+```{r}
+source("01_leads_funnel.R")$value
+```
+
+### Canales
+
+```{r}
+source("02_channels.R")$value
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Predicción Leads
+
+```{r}
+source("03_leads_forecast.R")$value
+```
+
+### Campañas SEM
+
+```{r}
+source('04_adwords_campaigns.R')$value
+```
+
