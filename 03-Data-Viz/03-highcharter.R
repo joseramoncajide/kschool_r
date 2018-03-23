@@ -38,3 +38,8 @@ sessions_df %>%
   hc_title(text = "Tráfico por dispositivos") %>%
   hc_subtitle(text = "Evolución temporal")
 
+sessions_df %>% 
+  hchart(type = "heatmap", hcaes(x = deviceCategory, y = channelGrouping, value = bounceRate)) %>% 
+  hc_legend(layout = "vertical", verticalAlign = "top", align = "right") %>% 
+  hc_title(text = "Tasa de rebote") 
+
