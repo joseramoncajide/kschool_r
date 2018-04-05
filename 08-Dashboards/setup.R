@@ -7,7 +7,7 @@ setwd("~/Documents/GitHub/kschool_r/08-Dashboards")
 
 
 # Configuración acceso a GA -----------------------------------------------
-
+install.packages('googleAnalyticsR')
 library(googleAnalyticsR)
 ga_auth(new_user = T)
 
@@ -21,9 +21,11 @@ Sys.setenv(GA_AUTH_FILE = 'ga_auth_token.httr-oauth')
 
 library(googleAnalyticsR)
 
-ga_account_list()
+ga_account_list() 
 
 # load("data/ga_data.RData")
+
+install.packages('flexdashboard')
 
 # File > New file > R Markdown ... > From Template > Flex Dashboard
 
