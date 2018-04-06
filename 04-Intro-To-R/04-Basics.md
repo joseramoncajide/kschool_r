@@ -55,11 +55,6 @@ class(z)
 ``` r
 # install.packages("stringr")
 library(stringr)
-```
-
-    ## Warning: package 'stringr' was built under R version 3.3.2
-
-``` r
 str_length(x)
 ```
 
@@ -364,34 +359,34 @@ df <- data.frame(id = letters[1:10], x = 1:10, y = rnorm(10))
 df
 ```
 
-    ##    id  x           y
-    ## 1   a  1  1.52440667
-    ## 2   b  2 -0.93409308
-    ## 3   c  3  1.87509944
-    ## 4   d  4  0.03558504
-    ## 5   e  5  0.24471947
-    ## 6   f  6 -0.60568154
-    ## 7   g  7 -1.19267434
-    ## 8   h  8 -0.12182857
-    ## 9   i  9 -1.15942674
-    ## 10  j 10 -0.22898682
+    ##    id  x            y
+    ## 1   a  1  0.102700161
+    ## 2   b  2  0.976084023
+    ## 3   c  3  0.452262760
+    ## 4   d  4 -1.237523103
+    ## 5   e  5 -0.005637874
+    ## 6   f  6  0.620445760
+    ## 7   g  7  1.665235418
+    ## 8   h  8 -0.582584040
+    ## 9   i  9  0.162380564
+    ## 10  j 10  0.578055565
 
 ``` r
 # agregar nuevas variables
 cbind(df, data.frame(z = 4))
 ```
 
-    ##    id  x           y z
-    ## 1   a  1  1.52440667 4
-    ## 2   b  2 -0.93409308 4
-    ## 3   c  3  1.87509944 4
-    ## 4   d  4  0.03558504 4
-    ## 5   e  5  0.24471947 4
-    ## 6   f  6 -0.60568154 4
-    ## 7   g  7 -1.19267434 4
-    ## 8   h  8 -0.12182857 4
-    ## 9   i  9 -1.15942674 4
-    ## 10  j 10 -0.22898682 4
+    ##    id  x            y z
+    ## 1   a  1  0.102700161 4
+    ## 2   b  2  0.976084023 4
+    ## 3   c  3  0.452262760 4
+    ## 4   d  4 -1.237523103 4
+    ## 5   e  5 -0.005637874 4
+    ## 6   f  6  0.620445760 4
+    ## 7   g  7  1.665235418 4
+    ## 8   h  8 -0.582584040 4
+    ## 9   i  9  0.162380564 4
+    ## 10  j 10  0.578055565 4
 
 **Funciones útiles:**
 
@@ -419,48 +414,45 @@ str(df)
 
     ## 'data.frame':    12 obs. of  3 variables:
     ##  $ month        : Factor w/ 12 levels "April","August",..: 5 4 8 1 9 7 6 2 12 11 ...
-    ##  $ sesiones     : num  404 381 389 398 387 ...
-    ##  $ transacciones: num  20.9 20.2 18.6 20.9 24.3 ...
+    ##  $ sesiones     : num  409 413 382 387 406 ...
+    ##  $ transacciones: num  24.4 21.6 19 20.5 23.5 ...
 
 ``` r
 df[df$sesiones < 400, ]
 ```
 
-    ##        month sesiones transacciones
-    ## 2   February   381.39         20.21
-    ## 3      March   388.83         18.56
-    ## 4      April   398.00         20.90
-    ## 5        May   387.22         24.30
-    ## 6       June   393.03         15.63
-    ## 8     August   399.40         27.22
-    ## 9  September   399.11         24.02
-    ## 10   October   390.16         15.99
+    ##       month sesiones transacciones
+    ## 3     March   382.49         18.99
+    ## 4     April   387.21         20.46
+    ## 8    August   385.50         23.83
+    ## 10  October   392.05         21.22
+    ## 11 November   394.97         17.55
 
 ``` r
 df[c(1, 3), ]
 ```
 
     ##     month sesiones transacciones
-    ## 1 January   404.28         20.88
-    ## 3   March   388.83         18.56
+    ## 1 January   408.70         24.35
+    ## 3   March   382.49         18.99
 
 ``` r
 df[, c("month", "transacciones")]
 ```
 
     ##        month transacciones
-    ## 1    January         20.88
-    ## 2   February         20.21
-    ## 3      March         18.56
-    ## 4      April         20.90
-    ## 5        May         24.30
-    ## 6       June         15.63
-    ## 7       July         20.17
-    ## 8     August         27.22
-    ## 9  September         24.02
-    ## 10   October         15.99
-    ## 11  November         23.64
-    ## 12  December         15.99
+    ## 1    January         24.35
+    ## 2   February         21.61
+    ## 3      March         18.99
+    ## 4      April         20.46
+    ## 5        May         23.53
+    ## 6       June         10.96
+    ## 7       July         32.38
+    ## 8     August         23.83
+    ## 9  September         22.71
+    ## 10   October         21.22
+    ## 11  November         17.55
+    ## 12  December         16.07
 
 ``` r
 # df[c("month", "transacciones")]

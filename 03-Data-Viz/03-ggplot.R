@@ -28,13 +28,9 @@ ggplot(mapping = aes(y = vector_y, x = vector_x))  + geom_point()
 
 # Importamos datos --------------------------------------------------------
 
-read_csv('/Users/JOSE/Documents/GitHub/kschool_r/03-Data-Viz/data/adwords.csv')
-
 mis_datos <- read_csv('03-Data-Viz/data/adwords.csv')
 
 summary(mis_datos)
-
-glimpse(mis_datos)
 
 dim(mis_datos)
 
@@ -74,7 +70,6 @@ ggplot(mis_datos, aes(y = adClicks, x = impressions, color = programa, size = ct
 
 #Geometric objects: Variables continuas
 
-ggplot(mis_datos, aes(y = adClicks, x = impressions)) + geom_point()
 ggplot(mis_datos, aes(y = adClicks, x = impressions)) + geom_line()
 ggplot(mis_datos, aes(y = adClicks, x = impressions)) + geom_smooth()
 ggplot(mis_datos, aes(y = adClicks, x = impressions)) + geom_point() + geom_smooth()
@@ -106,20 +101,6 @@ ggplot(mis_datos, aes(y = adClicks, x = impressions)) +
   geom_smooth(method = 'lm') +
   facet_wrap(~ ciudad, scales = "free") 
 
-ggplot(mis_datos, aes(y = adClicks, x = impressions)) + 
-  geom_point() + 
-  geom_smooth(method = 'lm') +
-  facet_grid(. ~ programa, scales = "free") # Columnas
-
-ggplot(mis_datos, aes(y = adClicks, x = impressions)) + 
-  geom_point() + 
-  geom_smooth(method = 'lm') +
-  facet_grid(programa ~ ., scales = "free") # Filas
-
-ggplot(mis_datos, aes(y = adClicks, x = impressions)) + 
-  geom_point() + 
-  geom_smooth(method = 'lm') +
-  facet_grid(programa ~ ciudad, scales = "free") # Filas
 
 # Superposición de puntos
 
@@ -130,18 +111,6 @@ ggplot(mis_datos, aes(y = adClicks, x = impressions, color = programa)) + geom_p
 ggplot(mis_datos, aes(y = adClicks, x = impressions, color = programa)) + geom_jitter(width = 0.8, height = 0.8)
 
 
-# Histogramas
-
-ggplot(mis_datos, aes(x = adCost)) + geom_histogram(binwidth = 5)
-
-ggplot(mis_datos, aes(x = adCost)) + geom_freqpoly()
-
-ggplot(mis_datos, aes(x = adCost)) + geom_density(aes(color=programa)) 
-ggplot(mis_datos, aes(x = adCost)) + geom_density(aes(fill=programa, alpha = 0.5))
-
-ggplot(mis_datos, aes(x = adCost)) + 
-  geom_density(aes(fill=programa, alpha = 0.5)) + 
-  facet_wrap(~ ciudad, scales = 'free') 
 
 
 # Mejorando lo gráficos ---------------------------------------------------
