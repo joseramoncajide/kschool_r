@@ -30,7 +30,7 @@ source("01_leads_funnel.R")$value
 ### Canales
 
 ```{r}
-source("02_channels.R")$value
+# source("02_channels.R")$value
 ```
 
 Column {data-width=650}
@@ -45,6 +45,6 @@ source("03_leads_forecast.R")$value
 ### Campañas SEM
 
 ```{r}
-source('04_adwords_campaigns.R')$value
+# source('04_adwords_campaigns.R')$value
 ```
 

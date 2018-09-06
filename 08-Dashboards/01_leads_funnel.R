@@ -33,7 +33,10 @@ funnel_df <- bind_rows(ga_funnel_step_1_df, ga_funnel_step_2_df)
 
 # Visualización Funnel ----------------------------------------------------
 
-hchart(funnel_df, "funnel", hcaes(y = users, name = funnel_step)) %>%  
-  hc_add_theme(hc_theme_google()) %>% 
+highchart() %>% 
+  hc_chart(type = "funnel") %>% 
+  hc_xAxis(categories = funnel_df$funnel_step) %>% 
+  hc_add_series(funnel_df$users, showInLegend = FALSE, dataLabels = list(enabled = FALSE))  %>% 
   hc_title(text = "Funnel captación de Leads") %>%
   hc_subtitle(text = "Usuarios que interactúan con la oferta de cursos y contactos generados")
+

@@ -20,14 +20,16 @@ ga_adwords_df %>%
 # Transformación de los datos ---------------------------------------------
 
 ga_adwords_scaled_mat <- 
-
+  
 # Clustering --------------------------------------------------------------
 
 
 
 # Visualización segmentación de campañas ----------------------------------
 
-hchart(ga_adwords_df, hcaes(x = adCost, y = impressions, group = cluster, size=goal3completions), type = 'scatter') %>% 
+highchart() %>% 
+  hc_title(text = "Scatter chart with size and color") %>% 
+  hc_add_series_scatter(x= ga_adwords_df$adCost, y=ga_adwords_df$impressions, z =  ga_adwords_df$goal3completions, color=ga_adwords_df$cluster) %>% 
   hc_title(text = 'SEM') %>% 
   hc_subtitle(text = 'Clustering de campañas de Google Adwords') %>%
   hc_tooltip(pointFormat = "Campaña: {point.campaign}") %>% 
