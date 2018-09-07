@@ -99,7 +99,7 @@ ggplot(mis_datos, aes(y = adClicks, x = impressions)) +
 ggplot(mis_datos, aes(y = adClicks, x = impressions)) + 
   geom_point() + 
   geom_smooth(method = 'lm') +
-  facet_wrap(~ ciudad, scales = "free") 
+  facet_wrap( ~ nombre, scales = "free") 
 
 
 # Superposición de puntos
