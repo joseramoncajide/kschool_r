@@ -8,7 +8,7 @@
 # returns path for the current working directory
 getwd()
 # set the working directory to a specified directory
-setwd("/Users/jose/Documents/GitHub/master_data_science")   
+setwd("/Users/jose/Documents/GitHub/kschool_r/")   
 
 
 # The workspace environment will also list your user defined objects such as vectors, matrices, data frames, lists, and functions
