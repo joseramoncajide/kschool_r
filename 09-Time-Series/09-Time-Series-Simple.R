@@ -196,7 +196,7 @@ plot(web_data_ts)
 # library(xts)
 web_data_xts <- xts(ga_data_pivoted_df[-1], order.by = as.Date(ga_data_pivoted_df$date), frequency = 365)
 plot.xts(web_data_xts)
-plot.xts(web_data_xts, multi.panel=T, grid.ticks.on = F, major.ticks = F, minor.ticks = F)
+
 
 
 # Causal Impact -----------------------------------------------------------
