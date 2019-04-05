@@ -1,6 +1,6 @@
 ---
 title: "Dashboard capatación de Leads"
-author: "@jrcajde"
+author: "@jrcajide"
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
@@ -24,7 +24,7 @@ Column {data-width=350}
 ### Leads
 
 ```{r}
-source("01_leads_funnel.R")$value
+# source("01_leads_funnel.R")$value
 ```
 
 ### Canales
@@ -39,7 +39,7 @@ Column {data-width=650}
 ### Predicción Leads
 
 ```{r}
-source("03_leads_forecast.R")$value
+# source("03_leads_forecast.R")$value
 ```
 
 ### Campañas SEM
