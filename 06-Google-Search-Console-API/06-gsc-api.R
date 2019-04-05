@@ -21,19 +21,20 @@ download_dimensions <- c("query","page","country")
 
 type <- c('web')
 
+filter <- c("device==DESKTOP","country==esp")
 
 queries <- search_analytics("http://www.pasonoroeste.com/", 
                             startDate = start, 
                             endDate = end, 
                             dimensions = download_dimensions,
-                            dimensionFilterExp = c("device==DESKTOP","country==esp"),
-                            searchType="web", rowLimit = 5000)
+                            dimensionFilterExp = filter,
+                            searchType=type, 
+                            rowLimit = 5000) 
 
-queries <- as_data_frame(queries)
+queries <- as_data_frame(queries) %>%  
+  arrange(desc(clicks))
 
-queries <- queries %>%  arrange(desc(clicks))
-
-queries %>% View()
+queries
 
 # write.csv(queries, paste0("06-Google-Search-Console-API/data/gsc_data_",start, ".csv"), row.names = F)
 # queries <- read_csv("06-Google-Search-Console-API/data/gsc_data_2017-02-08.csv")
