@@ -2,7 +2,7 @@
 # Series temporales y estadísticas básica para Analítica Web
 ##########################################################################
 
-setwd('/Users/jose/Documents/GitHub/kschool_r/09-Time-Series')
+setwd('/Users/jose/GitHub/kschool_r/09-Time-Series')
 
 ## ------------------------------------------------------------------------
 # Cargamos la librerías necesarias
