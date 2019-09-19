@@ -37,7 +37,7 @@ queries <- as_data_frame(queries) %>%
 queries
 
 # write.csv(queries, paste0("06-Google-Search-Console-API/data/gsc_data_",start, ".csv"), row.names = F)
-# queries <- read_csv("06-Google-Search-Console-API/data/gsc_data_2017-02-08.csv")
+# queries <- read_csv('06-Google-Search-Console-API/data/search_console_paso_noroeste.csv')
 
 
 # Text mining -------------------------------------------------------------
