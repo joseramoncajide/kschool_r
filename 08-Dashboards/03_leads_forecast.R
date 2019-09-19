@@ -4,12 +4,12 @@
 
 # Obtención de datos ------------------------------------------------------
 
-# ¿Cúnatos eventos únicos mensuales han tenido lugar para la categoría de evento 'Conversion' y la acción de evento 'Form' desde 2015-01-01 hasta el 2018-02-28?
+# ¿Cúantos eventos únicos mensuales han tenido lugar para la categoría de evento 'Conversion' y la acción de evento 'Form' desde 2017-01-01 hasta el 2019-08-31?
 
 # yearMonth uniqueEvents
-# 201501           68
-# 201502           65
-# 201503           78
+# 201701           151
+# 201702           126
+# 201703           203
 
 ga_leads_df <- google_analytics_3(...)
 

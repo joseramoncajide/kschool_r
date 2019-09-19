@@ -28,7 +28,6 @@ ga_adwords_scaled_mat <-
 # Visualización segmentación de campañas ----------------------------------
 
 highchart() %>% 
-  hc_title(text = "Scatter chart with size and color") %>% 
   hc_add_series_scatter(x= ga_adwords_df$adCost, y=ga_adwords_df$impressions, z =  ga_adwords_df$goal3completions, color=ga_adwords_df$cluster) %>% 
   hc_title(text = 'SEM') %>% 
   hc_subtitle(text = 'Clustering de campañas de Google Adwords') %>%
