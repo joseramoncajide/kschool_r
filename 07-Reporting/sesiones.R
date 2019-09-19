@@ -1,4 +1,4 @@
-setwd("~/Documents/GitHub/kschool_r/07-Reporting")
+setwd("~/GitHub/kschool_r/07-Reporting")
 
 # Clave de acceso a Google Analytics
 Sys.setenv(GA_AUTH_FILE = "ks-alumnos-ga.json")
@@ -17,8 +17,8 @@ fecha_actual <- Sys.Date()
 
 ultimo_dia_mes_anterior <- rollback(fecha_actual)
 
-sesiones.df <- google_analytics(id = "46728973",
-                                start = c("2014-01-01"), 
+sesiones.df <- google_analytics_3(id = "46728973",
+                                start = c("2017-07-01"), 
                                 end = ultimo_dia_mes_anterior,
                                 metrics = c("sessions"),
                                 dimensions = c("yearMonth"),
@@ -27,7 +27,7 @@ sesiones.df <- google_analytics(id = "46728973",
 
 ## ---- include=FALSE------------------------------------------------------
 # Convertimos los datos a una serie temporal
-sesiones.ts <- ts(sesiones.df$sessions, start = c(2014,01), end = c(2017,08), frequency = 12)
+sesiones.ts <- ts(sesiones.df$sessions, start = c(2017,07), end = c(2019,08), frequency = 12)
 plot(sesiones.ts)
 
 ## ------------------------------------------------------------------------
