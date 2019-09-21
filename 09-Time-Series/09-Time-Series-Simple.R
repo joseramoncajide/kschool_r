@@ -2,8 +2,6 @@
 # Series temporales y estadísticas básica para Analítica Web
 ##########################################################################
 
-setwd('/Users/jose/GitHub/kschool_r/09-Time-Series')
-
 ## ------------------------------------------------------------------------
 # Cargamos la librerías necesarias
 list.of.packages <- c("imputeTS", "smooth", "strucchange", "CausalImpact", "tidyverse", "GGally", "highcharter", "xts", "forecast")
