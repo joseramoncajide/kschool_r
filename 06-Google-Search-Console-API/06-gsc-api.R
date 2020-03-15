@@ -4,51 +4,54 @@
 ##########################################################################
 
 # Cargamos la librerías necesarias
-list.of.packages <- c("tidyverse","googleAuthR", "searchConsoleR", "tm" , "wordcloud")
-new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
-if(length(new.packages)) install.packages(new.packages)
-lapply(list.of.packages, require, character.only = TRUE)
+library(tidyverse)
 
+install.packages("googleAuthR")
+library(googleAuthR)
+
+install.packages("searchConsoleR")
+library(searchConsoleR)
+
+install.packages("tm")
+library(tm)
+
+install.packages("wordcloud")
+library(wordcloud)
+
+# Autenticación
+# scr_auth(token = 'sc.oauth')
 scr_auth()
 
 list_websites()
 
-start <- Sys.Date() - 60
-
-end <- Sys.Date() - 3 
-
-download_dimensions <- c("query","page","country")
-
-type <- c('web')
-
-filter <- c("device==DESKTOP","country==esp")
-
 queries <- search_analytics("http://www.pasonoroeste.com/", 
-                            startDate = start, 
-                            endDate = end, 
-                            dimensions = download_dimensions,
-                            dimensionFilterExp = filter,
-                            searchType=type, 
+                            startDate = Sys.Date() - 60, 
+                            endDate = Sys.Date() - 3, 
+                            dimensions = c("query","page","country"),
+                            dimensionFilterExp = c("device==DESKTOP","country==esp"),
+                            searchType=c('web'), 
                             rowLimit = 5000) 
 
-queries <- as_data_frame(queries) %>%  
+queries_df <- queries %>% 
+  as_tibble(queries) %>%  
   arrange(desc(clicks))
 
-queries
 
-# write.csv(queries, paste0("06-Google-Search-Console-API/data/gsc_data_",start, ".csv"), row.names = F)
-# queries <- read_csv('06-Google-Search-Console-API/data/search_console_paso_noroeste.csv')
+
+# write_csv(queries_df, paste0("data/gsc_data_",Sys.Date() - 3, ".csv"))
+# queries_df <- read_csv('./data/gsc_data_2020-03-12.csv')
 
 
 # Text mining -------------------------------------------------------------
 
-corpus <- Corpus(VectorSource(queries$query))
+corpus <- Corpus(VectorSource(queries_df$query))
 dtm <- TermDocumentMatrix(corpus)
 
 freq <- colSums(as.matrix(dtm))   
-length(freq)   
+
 findFreqTerms(dtm, 10)
-findAssocs(dtm, "viajar", corlimit=0.15)
+
+findAssocs(dtm, "paso", corlimit=0.15)
 
 set.seed(4363)
 m = as.matrix(dtm)
