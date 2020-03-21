@@ -142,31 +142,25 @@ flights %>%
 
 
 ## ------------------------------------------------------------------------
-#Cargamos un nuevo conjunot de datos
+#Cargamos un nuevo conjunto de datos
 airports <- read_csv("data/airports.csv")
 airports
 
-location <- airports %>% 
-  select(DEST = iata, name = airport, lat, long)
-location
-
-delays <- flights %>%
-  group_by(DEST) %>%
-  summarise(ARR_DELAY = mean(ARR_DELAY, na.rm = TRUE), n = n()) %>%
-  arrange(desc(ARR_DELAY)) 
-
-final <- inner_join(location, delays, by=c("DEST")) 
-# final %>% View()
-
-
-ggplot(final, aes(long, lat)) + 
+flights %>% 
+  group_by(DEST) %>% 
+  summarise(ARR_DELAY = mean(ARR_DELAY, na.rm = T), 
+            n = n()) %>% 
+  arrange(-ARR_DELAY) %>% 
+  # rename(iata = DEST) %>% 
+  left_join(airports, by = c('DEST' = 'iata')) %>% 
+  drop_na() %>% 
+  # write.table('informe_destinos.csv',sep = ';')
+  ggplot(aes(x=long, y = lat)) +
   borders("state") + 
-  geom_point(aes(colour = ARR_DELAY), size = 5, alpha = 0.9) + 
-  geom_text(aes(label=DEST, hjust=-.2), size=1.9) +
+  geom_point(aes(colour = n), size = 5, alpha = 0.9) + 
+  geom_text(aes(label=city, hjust=-.2), size=1.9) +
   scale_colour_gradient2() +
   theme_minimal() +
   coord_quickmap()
-
-delays <- delays %>% filter(ARR_DELAY < 0)
-
+  
 
