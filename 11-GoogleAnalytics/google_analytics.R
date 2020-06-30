@@ -3,14 +3,18 @@
 # Configuración acceso a GA -----------------------------------------------
 install.packages("googleAnalyticsR", dependencies = TRUE)
 library(googleAnalyticsR)
-ga_auth(new_user = T)
+ga_auth()
 
 file.exists('.httr-oauth')
 
 file.copy('.httr-oauth', 'ga_auth_token.httr-oauth')
 
 
+
+
 Sys.setenv(GA_AUTH_FILE = 'ga_auth_token.httr-oauth')
+Sys.setenv(GA_AUTH_FILE = 'kschool.alumnos@gmail.com')
+
 library(googleAnalyticsR)
 
 library(tidyverse)
