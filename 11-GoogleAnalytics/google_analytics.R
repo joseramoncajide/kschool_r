@@ -1,24 +1,9 @@
-
+library(tidyverse)
 
 # Configuración acceso a GA -----------------------------------------------
 install.packages("googleAnalyticsR", dependencies = TRUE)
 library(googleAnalyticsR)
-googleAuthR::gar_token_info(detail_level = getOption("googleAuthR.verbose", default = 3))
 ga_auth()
-
-file.exists('.httr-oauth')
-
-file.copy('.httr-oauth', 'ga_auth_token.httr-oauth')
-
-
-Sys.setenv(GA_AUTH_FILE = 'ga_auth_token.httr-oauth')
-
-
-googleAuthR::gar_auth("ga_auth_token.httr-oauth")
-
-library(googleAnalyticsR)
-
-library(tidyverse)
 
 ga_account_list()
 
