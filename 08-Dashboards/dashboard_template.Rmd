@@ -8,8 +8,9 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-Sys.setenv(GA_AUTH_FILE = 'ga_auth_token.httr-oauth')
+#Sys.setenv(GA_AUTH_FILE = 'ga_auth_token.httr-oauth')
 library(googleAnalyticsR)
+ga_auth(email="kschool.alumnos@gmail.com")
 library(tidyverse)
 library(highcharter)
 library(forecast)

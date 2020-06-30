@@ -1,25 +1,31 @@
 ###########################################################################
 # @jrcajide
 # Dashboards
-# Sol: https://goo.gl/xtCG2P
 ##########################################################################
 
 setwd("~/Documents/GitHub/kschool_r/08-Dashboards")
 
 
 # Configuración acceso a GA -----------------------------------------------
+install.packages('googleAnalyticsR')
+library(googleAnalyticsR)
+ga_auth(new_user = T)
+
+file.exists('.httr-oauth')
+
+file.copy('.httr-oauth', 'ga_auth_token.httr-oauth')
+
+.rs.restartR()
+
+Sys.setenv(GA_AUTH_FILE = 'ga_auth_token.httr-oauth')
 
 library(googleAnalyticsR)
 
-ga_auth()
+ga_account_list() 
 
-# Agregar esta línea al documento RMarkdown o Flex Dashboard
-ga_auth(email="kschool.alumnos@gmail.com")
-
-
-
-# save(ga_funnel_step_1_df, ga_funnel_step_2_df, ga_channels_df, ga_leads_df, ga_adwords_df, file = "data/ga_data.RData")
 # load("data/ga_data.RData")
+
+install.packages('flexdashboard')
 
 # File > New file > R Markdown ... > From Template > Flex Dashboard
 
@@ -27,12 +33,22 @@ ga_auth(email="kschool.alumnos@gmail.com")
 
 
 # Librerías y parámetros del dashboard  ----------------------------------
+Sys.setenv(GA_AUTH_FILE = 'ga_auth_token.httr-oauth')
 library(googleAnalyticsR)
-ga_auth(email="kschool.alumnos@gmail.com")
 library(tidyverse)
 library(highcharter)
 library(forecast)
 library(flexdashboard)
+
+# Ejemplo consulta a la api de GA -----------------------------------------
+
+ga_data_df <- google_analytics_3(id = "46728973", 
+                                 start="30daysAgo", 
+                                 end="yesterday", 
+                                 metrics = c("users"),
+                                 dimensions = c("date"), 
+                                 segment = "users::condition::ga:browser=@Chrome",
+                                 max_results = "10001")
 
 # 1) Embudo de captación de Leads -----------------------------------------
 source("01_leads_funnel.R")$value
