@@ -1,11 +1,10 @@
 ---
 title: "Informe datos GA"
 author: '@jrcajide'
-date: "11/3/2017"
 output: github_document
 ---
 
-# Gisela
+# Paso del noroeste
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
@@ -25,20 +24,20 @@ lapply(list.of.packages, require, character.only = TRUE)
 
 
 ```{r, message=FALSE, warning=FALSE, include=FALSE}
-ga_auth()
+ga_auth(email="kschool.alumnos@gmail.com")
 #Autenticación en GA
 # ga_auth()
 # Sys.setenv("GA_AUTH_FILE" = "./.httr-oauth")
 
 start.date <- Sys.Date() - 30
 end.date <- Sys.Date() - 1
-
-keywords_ga <- google_analytics(id = "26384357",
+# Paso del Noroeste: http://www.pasonoroeste.com
+keywords_ga <- google_analytics_3(id = "12617825",
                                     start = Sys.Date() - 30, 
                                     end = end.date,
                                     metrics = c("sessions","bounces"),
                                     dimensions = c("keyword"),
-                                    segment = c("sessions::condition::ga:medium==cpc;ga:source==google"), 
+                                    # segment = c("sessions::condition::ga:medium==cpc;ga:source==google"), 
                                     max_results = 11000)
 
 
@@ -76,28 +75,28 @@ p <- p + xlab("Keywords") + ylab("Frecuencia")
 print(p)   
 ```
 
-Palabras relacionadas con *sujetadores*:
+Palabras relacionadas:
 
 ```{r, include=FALSE}
-findAssocs(dtm, "sujetadores", corlimit=0.15)
+findAssocs(dtm, "paso", corlimit=0.15)
 ```
 
 
 ```{r}
-sujetadores <- findAssocs(dtm, "sujetadores", corlimit=0.15)
-keywords_sujetadores <- data_frame(keyword =names(sujetadores$sujetadores),
-                                      frecuencia= sujetadores$sujetadores)
-```
-
-**Palabras asociadas a `sujetadores`**
-
-```{r}
-knitr::kable(head(keywords_sujetadores, 20))
+palabras_asociaciadas <- findAssocs(dtm, "paso", corlimit=0.15)
+keywords <- tibble(keyword =names(palabras_asociaciadas$paso),
+                   frecuencia= palabras_asociaciadas$paso)
 ```
 
 
+
 ```{r}
-wordcloud(keywords_sujetadores$keyword, colors=c(1,10), random.color=T, keywords_sujetadores$frecuencia, min.freq=2)
+knitr::kable(head(keywords, 20))
+```
+
+
+```{r}
+wordcloud(keywords$keyword, colors=c(1,10), random.color=T, keywords$frecuencia, min.freq=2)
 ```
 
 

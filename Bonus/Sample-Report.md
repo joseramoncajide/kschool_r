@@ -1,63 +1,53 @@
 Informe datos GA
 ================
 @jrcajide
-11/3/2017
 
-Gisela
-======
+# Gisela
 
-Instalación y carga de librerías
---------------------------------
+## Instalación y carga de librerías
 
-Extracción de datos de Google Analytics (GA)
---------------------------------------------
+## Extracción de datos de Google Analytics (GA)
 
-| keyword                         |  sessions|  bounces|
-|:--------------------------------|---------:|--------:|
-| (automatic matching)            |         9|        6|
-| (content targeting)             |        36|       25|
-| (not set)                       |        84|       34|
-| (remarketing/content targeting) |       287|      125|
-| +3 +push +up                    |         2|        1|
-| +braguitas +algodon             |         2|        1|
-| +braguitas +baratas             |         4|        1|
-| +braguitas +blancas             |         3|        3|
-| +braguitas +brasileñas          |        45|       21|
-| +braguitas +gisela              |        10|        2|
+| keyword                                                        | sessions | bounces |
+| :------------------------------------------------------------- | -------: | ------: |
+| (not provided)                                                 |     3677 |    2108 |
+| (not set)                                                      |     3628 |    2290 |
+| \+viaje +organizado +marruecos                                 |        2 |       2 |
+| 3000km                                                         |        6 |       0 |
+| VIAJE NORTE JAPON                                              |        1 |       1 |
+| el paso del noroeste                                           |        2 |       2 |
+| <https://www.pasonoroeste.com/viaje/a/Ecuador.html>            |       11 |       5 |
+| <https://www.pasonoroeste.com/viaje/maldivas/maldivas-activo/> |        1 |       0 |
+| paso al noroeste                                               |        2 |       2 |
+| paso al noroeste agencia de viajes                             |        1 |       0 |
 
-Análisis de Kw
---------------
+## Análisis de Kw
 
 **Top 10 palabras más frecuentes**
 
     ## Selecting by freq
 
-![](Sample-Report_files/figure-markdown_github/unnamed-chunk-5-1.png)
+![](Sample-Report_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 Palabras relacionadas con *sujetadores*:
 
 **Palabras asociadas a `sujetadores`**
 
-| keyword      |  frecuencia|
-|:-------------|-----------:|
-| aros         |        0.31|
-| espalda      |        0.31|
-| sin          |        0.31|
-| escotes      |        0.26|
-| para         |        0.26|
-| con          |        0.19|
-| novia        |        0.19|
-| aire         |        0.18|
-| baratos      |        0.18|
-| bonitos      |        0.18|
-| descubierta  |        0.18|
-| nuevos       |        0.18|
-| playtex      |        0.18|
-| pronunciados |        0.18|
+| keyword  | frecuencia |
+| :------- | ---------: |
+| noroeste |       0.82 |
+| viajes   |       0.52 |
+| agencia  |       0.24 |
+| nnoreste |       0.24 |
+| completa |       0.24 |
+| espanol  |       0.24 |
+| pelicula |       0.24 |
+| ver      |       0.24 |
+| del      |       0.18 |
 
-![](Sample-Report_files/figure-markdown_github/unnamed-chunk-9-1.png)
+![](Sample-Report_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
-Exportar los datos
-------------------
+## Exportar los datos
 
-Los datos están ahora en el archivo [keywords\_2017-03-13.csv](keywords_2017-03-13.csv)
+Los datos están ahora en el archivo
+[keywords\_2020-09-25.csv](keywords_2020-09-25.csv)
