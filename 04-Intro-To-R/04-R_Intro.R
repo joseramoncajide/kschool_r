@@ -10,7 +10,7 @@
 
 1 + 
   
-4 + 5 * 2
+  4 + 5 * 2
 
 2/10000
 2 * 10^(-4)
@@ -44,50 +44,26 @@ log10(10)
 exp(0.5)
 
 
-# Directorio de trabajo ---------------------------------------------------
-
-getwd()
-dir <- "/" #usar la tecla tabulador tab para completar
-dir <- "~/GitHub/kschool_r/"
-dir
-setwd(dir)
-getwd()
-
-list.files()
-
-### Entorno
-ls()  
-x <- 10
-y <- 20
-x + y
-ls()  
-rm(y)
-y
-ls()
-rm(list = ls())
-
-
 # Tipos de variables ------------------------------------------------------
 
-x <- "Hola!"
-class(x)
-
-(y <- 1:10)
-class(y)
-length(y)
-
-## ------------------------------------------------------------------------
 x <- c(1, 2, 3)
-x
+class(x)
+length(x)
+
+x <- 1:10
+class(x)
 length(x)
 
 y <- c(TRUE, TRUE, FALSE, FALSE)
 class(y)
+length(y)
+
 z <- c("Oro", "Plata", "Bronce", "Cobre")
 class(z)
+length(z)
 
 z <- c(z, "Platino")
-z
+length(z)
 
 
 # usando secuencias
@@ -105,6 +81,28 @@ length(1:10)
 (xx <- c("a", TRUE))
 
 
+# Trabajando con vectores -------------------------------------------------
+x <- c(5.4, 6.2, 7.1, 4.8)
+x[1]
+x[c(3, 1)]
+x[1:3]
+x[c(1, 1)]
+
+## ------------------------------------------------------------------------
+x[-1]
+x[-c(1, 5)]
+
+## ------------------------------------------------------------------------
+x[c(TRUE, TRUE, FALSE, FALSE)]
+x[x > 6]
+
+
+# NA's --------------------------------------------------------------------
+x <- c(1, 2, NA, 4, 5)
+x
+is.na(x) 
+# Aplicación:
+x[!is.na(x)]
 
 # Comparación de vectores -------------------------------------------------
 
@@ -146,34 +144,32 @@ y <- 10:12
 
 # Se crean con list()
 x <- list(1, "a", TRUE)
+length(x)
 x
 
 # Podemos transformar otros objetos a lista con as.list()
 
-x <- 1:10
-x <- as.list(x)
-x
-length(x)
-
 ## ------------------------------------------------------------------------
-xlist <- list(a = "Conjunto de datos iris", b = 1:10, data = head(iris))
+xlist <- list(texto = c("Conjunto de datos iris"), secuencia = 1:10, tabla_datos = head(iris))
 xlist
-xlist$b
-
+length(xlist)
+xlist$texto
 
 
 # variables categóricas ---------------------------------------------------
 
-tallas <- factor(c("s", "xl", "m", "m", "xl", "s", "m", "xl", "m"))
+tallas <- factor(x = c("s", "xl", "m", "m", "xl", "s", "m", "xl", "m"))
 levels(tallas)
-length(levels(tallas))
+unique(tallas)
 
+length(levels(tallas)) 
 min(tallas)
-
 
 ## ------------------------------------------------------------------------
 
-tallas <- factor(tallas, levels=c("s", "m", "xl"), ordered = TRUE)
+tallas <- factor(x = c("s", "xl", "m", "m", "xl", "s", "m", "xl", "m"), 
+                 levels=c("s", "m", "xl"), 
+                 ordered = TRUE)
 levels(tallas)
 min(tallas) ## Ahora sí
 max(tallas)
@@ -185,10 +181,12 @@ barplot(table(tallas))
 
 # dataframes --------------------------------------------------------------
 
-df <- data.frame(id = letters[1:10], x = 1:10, y = rnorm(10))
+df <- data.frame(letras = letters[1:10], 
+                 secuencia = 1:10, 
+                 numeros_aleatorios = rnorm(10))
 df
 # agregar nuevas variables
-cbind(df, data.frame(z = 4))
+df$valor_fijo <- 4
 
 ## Prueba las siguientes funciones sobre el anterior dataframe
 ## head()
@@ -200,35 +198,11 @@ cbind(df, data.frame(z = 4))
 ## names()
 
 
-# Seleccionar -------------------------------------------------------------
-
-x <- c(5.4, 6.2, 7.1, 4.8)
-x[1]
-x[c(3, 1)]
-x[1:3]
-x[c(1, 1)]
-
-## ------------------------------------------------------------------------
-x[-1]
-x[-c(1, 5)]
-
-## ------------------------------------------------------------------------
-x[c(TRUE, TRUE, FALSE, FALSE)]
-x[x > 6]
-
-
-# NA's --------------------------------------------------------------------
-
-x <- c(1, 2, NA, 4, 5)
-x
-is.na(x) 
-# Aplicación:
-x[!is.na(x)]
-
-
 # Paquetes R --------------------------------------------------------------
 # https://github.com/qinwf/awesome-R
 installed.packages()
 install.packages("tidyverse")
 # update.packages()
 library(tidyverse)
+
+df <- as_tibble(df)
