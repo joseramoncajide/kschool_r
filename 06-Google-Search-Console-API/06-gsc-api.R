@@ -24,11 +24,11 @@ scr_auth()
 
 list_websites()
 
-queries <- search_analytics("http://www.pasonoroeste.com/", 
+queries <- search_analytics("http://www.escuelainfantillospinos.com/", 
                             startDate = Sys.Date() - 60, 
                             endDate = Sys.Date() - 3, 
                             dimensions = c("query","page","country"),
-                            dimensionFilterExp = c("device==DESKTOP","country==esp"),
+                            dimensionFilterExp = c("country==esp"),
                             searchType=c('web'), 
                             rowLimit = 5000) 
 
@@ -51,7 +51,7 @@ freq <- colSums(as.matrix(dtm))
 
 findFreqTerms(dtm, 10)
 
-findAssocs(dtm, "paso", corlimit=0.15)
+findAssocs(dtm, "infantil", corlimit=0.15)
 
 set.seed(4363)
 m = as.matrix(dtm)
