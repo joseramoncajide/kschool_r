@@ -1,24 +1,13 @@
-## ------------------------------------------------------------------------
-# Cargamos la librerías necesarias
-# list.of.packages <- c("tidyverse", "maps")
-# new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
-# if(length(new.packages)) install.packages(new.packages)
-# lapply(list.of.packages, require, character.only = TRUE)
-
-install.packages('tidyverse')
-install.packages('maps')
+# install.packages('tidyverse')
+# install.packages('maps')
 library(tidyverse)
 library(maps)
 
 
-setwd("./05-Data-Wrangling")
-
 ## ------------------------------------------------------------------------
 
 # Cargamos el fichero de datos
-flights <- read_csv("data/669307277_T_ONTIME.csv.zip")
-
-print(object.size(get('flights')), units='auto')
+flights <- read_csv(file = "05-Data-Wrangling/data/669307277_T_ONTIME.csv.zip")
 
 # explora
 head(flights)
@@ -28,10 +17,7 @@ str(flights)
 
 flights$X18 <- NULL
 
-
-
 ## ----results='hide'------------------------------------------------------
-# Vuelos del 31/12/2015
 summary(flights)
 
 barplot(table(flights$DAY_OF_MONTH))
@@ -79,18 +65,24 @@ flights %>%
     arrange(desc(DEP_DELAY))
 
 ## ------------------------------------------------------------------------
-# dplyr: comprobamos que es correcto
-flights %>% select(DISTANCE, AIR_TIME) %>%
+flights %>% 
+  select(DISTANCE, AIR_TIME) %>%
   mutate(SPEED = DISTANCE/AIR_TIME*60)
 
 # lo guardamos
-flights %>% mutate(SPEED = DISTANCE/AIR_TIME*60)
+flights <- flights %>% 
+  mutate(SPEED = DISTANCE/AIR_TIME*60)
 
-## ------------------------------------------------------------------------
-# dplyr:
+# ## summarise: Reducción de variables a valores
+# 
+# * Se usa principalmente tras una agrupación de datos
+# * `group_by` crea los grupos sobre los que vamos a trabajar
+# * `summarise` resume cada grupo
+
 flights %>%
     group_by(DEST) %>%
-    summarise(AVG_DELAY = mean(ARR_DELAY, na.rm=TRUE))
+    summarise(AVG_DELAY = mean(ARR_DELAY, na.rm=TRUE)) %>% 
+  arrange(-AVG_DELAY)
 
 ## ------------------------------------------------------------------------
 # media de vuelos cancelados o desviados por compañía
@@ -103,6 +95,9 @@ flights %>%
     group_by(CARRIER) %>%
     summarise_each(funs(min(., na.rm=TRUE), max(., na.rm=TRUE)), matches("DELAY"))
 
+
+# * `n()` nos dice el número de observaciones por grupo
+# * `n_distinct(vector)` nos dice el número de elementos únicos que hay en un vector
 
 ## ------------------------------------------------------------------------
 # Número de vuelos por cada día del mes ordenados descendentemente
@@ -134,38 +129,24 @@ flights %>%
     summarise(flight_count = n()) %>%
     mutate(change = flight_count - lag(flight_count))
 
-# delta
-
-pct <- function(x) {
-  x/lag(x)
-  }
-
-flights %>%
-    group_by(DAY_OF_MONTH) %>%
-    summarise(flight_count = n()) %>%
-    mutate_each(funs(pct), flight_count)
-
 
 ## ------------------------------------------------------------------------
 #Cargamos un nuevo conjunto de datos
-airports <- read_csv("data/airports.csv")
+airports <- read_csv("05-Data-Wrangling/data/airports.csv")
 airports
 
 flights %>% 
   group_by(DEST) %>% 
-  summarise(ARR_DELAY = mean(ARR_DELAY, na.rm = T), 
-            n = n()) %>% 
-  arrange(-ARR_DELAY) %>% 
-  # rename(iata = DEST) %>% 
+  summarise(average_delay = mean(ARR_DELAY, na.rm = T)) %>% 
   left_join(airports, by = c('DEST' = 'iata')) %>% 
-  drop_na() %>% 
-  # write.table('informe_destinos.csv',sep = ';')
+  drop_na() -> result_df
+
+result_df %>% 
   ggplot(aes(x=long, y = lat)) +
   borders("state") + 
-  geom_point(aes(colour = n), size = 5, alpha = 0.9) + 
+  geom_point(aes(colour = average_delay), size = 2, alpha = 0.9) + 
   geom_text(aes(label=city, hjust=-.2), size=1.9) +
-  scale_colour_gradient2() +
-  theme_minimal() +
-  coord_quickmap()
+  coord_quickmap() +
+  theme_light()
   
 
