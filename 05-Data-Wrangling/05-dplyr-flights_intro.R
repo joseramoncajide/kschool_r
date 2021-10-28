@@ -7,7 +7,7 @@ library(maps)
 ## ------------------------------------------------------------------------
 
 # Cargamos el fichero de datos
-flights <- read_csv(file = "05-Data-Wrangling/data/669307277_T_ONTIME.csv.zip")
+flights <- read_csv(file = "05-Data-Wrangling/data/669307277_T_ONTIME.csv")
 
 # explora
 head(flights)
@@ -15,7 +15,7 @@ dim(flights)
 # estructura del dataframe en con R
 str(flights)
 
-flights$X18 <- NULL
+flights$...18 <- NULL
 
 ## ----results='hide'------------------------------------------------------
 summary(flights)
@@ -87,8 +87,8 @@ flights %>%
 ## ------------------------------------------------------------------------
 # media de vuelos cancelados o desviados por compañía
 flights %>%
-    group_by(CARRIER) %>%
-    summarise_each(funs(mean), CANCELLED, DIVERTED)
+  group_by(CARRIER) %>%
+  summarise(across(.cols = c(CANCELLED, DIVERTED), .fns = mean))
 
 # retrasos máximos y mínimos de salida y llegada por cada compañia
 flights %>%
@@ -103,10 +103,10 @@ flights %>%
 # Número de vuelos por cada día del mes ordenados descendentemente
 
 flights %>%
-    group_by(DAY_OF_MONTH) %>%
-    summarise(total = n()) %>%
-    arrange(desc(total)) %>% 
-  ggplot(aes(x = factor(DAY_OF_MONTH), y = total)) + geom_bar(stat = "identity") 
+  group_by(DAY_OF_MONTH) %>%
+  summarise(total = n()) %>%
+  ggplot(aes(x = factor(DAY_OF_MONTH), y = total)) + 
+  geom_bar(stat = "identity") 
 
 # número total de vuelos y número de aviones distintos que han volado a cada destino
 flights %>%
@@ -120,14 +120,14 @@ flights %>%
 flights %>%
     group_by(CARRIER) %>%
     select(DAY_OF_MONTH, DEP_DELAY) %>%
-    top_n(2) %>%
+    top_n(3) %>%
     arrange(CARRIER, desc(DEP_DELAY))
 
 # Número de vuelos por mes y cambio respecto al dia anterior 
 flights %>%
     group_by(DAY_OF_MONTH) %>%
     summarise(flight_count = n()) %>%
-    mutate(change = flight_count - lag(flight_count))
+    mutate(change = flight_count - lag(flight_count, 7))
 
 
 ## ------------------------------------------------------------------------
@@ -138,10 +138,11 @@ airports
 flights %>% 
   group_by(DEST) %>% 
   summarise(average_delay = mean(ARR_DELAY, na.rm = T)) %>% 
-  left_join(airports, by = c('DEST' = 'iata')) %>% 
+  inner_join(airports, by = c('DEST' = 'iata')) %>% 
   drop_na() -> result_df
 
 result_df %>% 
+  top_n(3,wt = average_delay) %>% 
   ggplot(aes(x=long, y = lat)) +
   borders("state") + 
   geom_point(aes(colour = average_delay), size = 2, alpha = 0.9) + 
