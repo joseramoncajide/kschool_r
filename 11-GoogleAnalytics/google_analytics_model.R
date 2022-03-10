@@ -5,7 +5,7 @@
 library(tidyverse)
 
 # Configuración acceso a GA -----------------------------------------------
-install.packages("googleAnalyticsR", dependencies = TRUE)
+# install.packages("googleAnalyticsR", dependencies = TRUE)
 library(googleAnalyticsR)
 ga_auth()
 
@@ -13,7 +13,7 @@ ga_account_list()
 
 
 
-ga_data_df <- google_analytics_3(id = "232152050", #ID de la vista
+ga_data_df <- google_analytics_3(id = "12617825", #ID de la vista
                                  start="360daysAgo", 
                                  end="yesterday", 
                                  metrics = c("sessions", "bounces"),
