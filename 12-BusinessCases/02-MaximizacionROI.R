@@ -1,3 +1,5 @@
+# https://docs.google.com/presentation/d/1ISLoEkm9yfkDpbxN7tuZ_CACLY5au8kdo7v4W2Cdk1I/edit?usp=sharing
+
 library(lpSolve)
 
 # Función objetivo: Anotamos los coeficientes de la función objetivo que queremos maximizar o minimizar, 
