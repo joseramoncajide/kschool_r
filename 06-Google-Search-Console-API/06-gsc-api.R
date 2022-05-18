@@ -33,10 +33,8 @@ queries <- search_analytics("http://www.escuelainfantillospinos.com/",
                             rowLimit = 5000) 
 
 queries_df <- queries %>% 
-  as_tibble(queries) %>%  
+  as_tibble() %>%  
   arrange(desc(clicks))
-
-
 
 # write_csv(queries_df, paste0("data/gsc_data_",Sys.Date() - 3, ".csv"))
 # queries_df <- read_csv('./data/gsc_data_2020-03-12.csv')
