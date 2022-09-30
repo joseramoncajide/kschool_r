@@ -10,9 +10,10 @@ library(googleAnalyticsR)
 
 ga_account_list() %>% View()
 
+# Datos de 2021-11-15 a 2022-04-24
 ga_data_df <- google_analytics_3(id = "113351594", 
-                                 start="190daysAgo", 
-                                 end="30daysAgo", 
+                                 start="2021-11-15", 
+                                 end="2022-04-24", 
                                  metrics = c("users", "goal1Completions"),
                                  dimensions = c("date", "userType", "channelGrouping"), 
                                  filters = "ga:channelGrouping=~Organic|Direct|Paid",
@@ -126,10 +127,11 @@ predicciones_modelo_df %>%
 
 
 # Vamos a comprobar la predicción con lo ocurrido realmente en los últimos 30 días
-
+# Datos de 2021-11-15 a 2022-04-24
+as.Date('2022-04-24') + 30
 ga_data_actual_df <- google_analytics_3(id = "113351594", 
-                                        start="30daysAgo", 
-                                        end="yesterday", 
+                                        start="2022-04-25", 
+                                        end="2022-05-24", 
                                         metrics = c("goal1Completions"),
                                         dimensions = c("date"), 
                                         filters = "ga:channelGrouping=~Organic|Direct|Paid",
@@ -148,7 +150,7 @@ ga_data_actual_df %>%
   ggplot(aes(x=date)) +
   geom_line(aes(y=goal1Completions_obs)) +
   geom_line(aes(y=.mean), color = 'tomato')
-  
+
 
 # Error absoluto
 

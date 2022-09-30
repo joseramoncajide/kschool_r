@@ -9,14 +9,14 @@ install.packages("googleAnalyticsR", dependencies = TRUE)
 library(googleAnalyticsR)
 ga_auth()
 
-ga_account_list()
+ga_account_list() %>% View()
 
 # Fechas ejercicio original: 2020-08-19 a 2021-01-26
 # ga_data_df %>% saveRDS('11-GoogleAnalytics/ga_data_df.Rds')
 
-ga_data_df <- google_analytics_3(id = "46728973", 
-                                 start="190daysAgo", 
-                                 end="30daysAgo", 
+ga_data_df <- google_analytics_3(id = "113351594", 
+                                 start="2020-08-19", 
+                                 end="2021-01-26", 
                                  metrics = c("users", "goal1Completions"),
                                  dimensions = c("date", "userType", "channelGrouping"), 
                                  filters = "ga:channelGrouping=~Organic|Direct|Paid",
