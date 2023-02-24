@@ -24,7 +24,7 @@ scr_auth()
 
 list_websites()
 
-queries <- search_analytics("http://www.escuelainfantillospinos.com/", 
+queries <- search_analytics("http://www.escuelainfantiltrazos.es/", 
                             startDate = Sys.Date() - 60, 
                             endDate = Sys.Date() - 3, 
                             dimensions = c("query","page","country"),
