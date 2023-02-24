@@ -6,16 +6,16 @@
 # Cargamos la librerías necesarias
 library(tidyverse)
 
-install.packages("googleAuthR")
+# install.packages("googleAuthR")
 library(googleAuthR)
 
-install.packages("searchConsoleR")
+# install.packages("searchConsoleR")
 library(searchConsoleR)
 
-install.packages("tm")
+# install.packages("tm")
 library(tm)
 
-install.packages("wordcloud")
+# install.packages("wordcloud")
 library(wordcloud)
 
 # Autenticación
