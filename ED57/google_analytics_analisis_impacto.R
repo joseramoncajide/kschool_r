@@ -12,6 +12,7 @@ library(tidyverse)
 library(tsibble)
 library(forecast)
 library(fable)
+library(feasts)
 library(googleAnalyticsR)
 # ga_auth()
 
@@ -56,7 +57,7 @@ historico_df %>%
 # Datos pandemia --------------------------------------------------------
 pandemia_df <- google_analytics_3(id = "12617825", #ID de la vista (www.pasonoroeste.com)
                                  start="2020-01-01", 
-                                 end="2021-12-31", 
+                                 end="2020-12-31", 
                                  metrics = c("pageviews"),
                                  dimensions = c("date"), 
                                  max_results = "10001") %>% 
@@ -129,7 +130,7 @@ pandemia_ts %>%
   as_tibble() %>% 
   inner_join(predicciones_modelo_df,suffix = c('_obs', '_pred'),
              by = 'Year_Month') %>% 
-  select(Year_Month, .model, pageviews_obs, .mean) %>% 
+  dplyr::select(Year_Month, .model, pageviews_obs, .mean) %>% 
   filter(.model == 'arima') -> resultado_final_df
   
 resultado_final_df %>% 
@@ -169,6 +170,4 @@ informe_df %>%
             mensual_cpc = sum(modelo_cpc) / n(),
             modelo_cpm =sum(modelo_cpm),
             mensual_cpm = sum(modelo_cpm) / n())
-
-
 
